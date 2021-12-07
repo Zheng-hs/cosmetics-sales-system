@@ -1,0 +1,72 @@
+/* 全局样式 */
+html,body,#app {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    min-width: 1366px;
+}
+
+.el-breadcrumb {
+    margin-bottom: 15px;
+    font-size: 12px;
+}
+ 
+.el-card {
+    box-shadow: 0 1px rgba(0, 0, 0, 0.15) !important;
+}
+
+.el-table {
+    margin-top: 15px;
+    font-size: 12px;
+}
+.zk-table {
+    margin-top: 15px;
+}
+.zk-table__cell-inner {
+    text-align: center;
+}
+.cell {
+       text-align: center; 
+}
+.cell .el-result{
+    cursor: pointer;
+}
+.cell .el-result .el-result__icon svg{
+    width: 35px;
+    height: 35px;
+}
+.cell .el-result .el-result__title{
+    margin-top: 0;
+}
+.cell .el-result .el-result__title p{ 
+    font-size: 14px;
+}
+.cell img{
+    width: 50px;
+    height: 50px; 
+}
+.el-pagination {
+    margin-top: 15px;
+}
+.avatar-uploader {
+    display: flex;
+    justify-content: center;
+    padding-bottom: 20px;
+}
+.avatar-uploader .el-upload {
+    border: 1px solid #eee;
+    /* border-radius: 50%; */
+    background-color: #eee;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+  .avatar-uploader .el-upload:hover {
+    border-color: #409EFF;
+  }
+.el-select {
+    width: 100%;
+}
+.el-alert {
+    margin-bottom: 20px;
+}

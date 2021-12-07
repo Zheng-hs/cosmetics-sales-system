@@ -1,0 +1,10 @@
+// 改变主题色变量 element的主题
+$--color-primary: #409EFF;
+// 自定义主题色变量 修改我们自己写的样式
+.primaryColor{
+    background-color: #409EFF;
+}
+// 改变icon字体路径变量
+$--font-path: '~element-ui/lib/theme-chalk/fonts';
+
+@import "~element-ui/packages/theme-chalk/src/index";
