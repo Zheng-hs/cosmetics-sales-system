@@ -7,7 +7,7 @@ import 'element-ui/lib/theme-chalk/index.css'
 import './assets/css/global.css'
 import './assets/fonts/iconfont.css'
 import TreeTable from 'vue-table-with-tree-grid'
-
+import * as echarts from 'echarts'
 // 导入NProgress 包对应的js和css
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
@@ -32,7 +32,7 @@ axios.interceptors.response.use(config => {
 })
 
 Vue.prototype.$http = axios
-
+Vue.prototype.$echarts = echarts
 Vue.config.productionTip = false
 
 Vue.component('tree-table', TreeTable)
