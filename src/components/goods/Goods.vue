@@ -286,7 +286,7 @@ export default {
   methods: {
     async getUserList () {
       const { data: res } = await this.$http.post(
-        `/api/v1/goods/search?currPage=${this.queryInfo.currPage}&pageSize=${this.queryInfo.pageSize}`,
+        `/api/v1/goods/search?pageNo=${this.queryInfo.currPage}&pageSize=${this.queryInfo.pageSize}`,
         {}
       )
       if (res.code !== 200) {

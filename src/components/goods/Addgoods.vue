@@ -142,7 +142,7 @@
           </el-col>
           <el-col :span="10">
             <el-form-item label="商品原价" prop="goodsPrice">
-              <el-input v-model="addForm.goodsPrice"></el-input>
+              <el-ichooseNormnput v-model="addForm.goodsPrice"></el-ichooseNormnput>
             </el-form-item>
           </el-col>
         </el-row> -->
@@ -164,9 +164,9 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="4">
+          <!-- <el-col :span="4">
             <el-button @click="getTable">确定</el-button>
-          </el-col>
+          </el-col> -->
         </el-row>
         <div class="norms" v-for="item in list" :key="item.normsName">
           <span class="normsName">{{ item.normsName }}</span>
@@ -178,7 +178,7 @@
               v-for="(items, i) in item.goodsNormsEntities"
               :key="i"
               closable
-              @close="handleClose(items, item.goodsNormsEntities)"
+              @close="handleClose(items, item.goodsNormsEntities,item.normsName)"
             >
               {{ items.normsValue }}
             </el-tag>
@@ -248,7 +248,9 @@ export default {
       normsValueList: [],
       normsNameList: [],
       alist: [],
-      blist: []
+      blist: [],
+      allList: [],
+      chooseNorms: [],
     };
   },
   created() {
@@ -290,14 +292,48 @@ export default {
       if (res.code !== 200) {
         return this.$message.error("获取商品分类失败!");
       }
-      for (var i = 0; i < this.list.length; i++) {
+      for (let i = 0; i < this.list.length; i++) {
         if (this.list[i].normsName === val) {
           return false;
         }
       }
       this.list.push(res.data.data[0]);
       this.normsNameList.push(val);
-      console.log(this.list);
+      this.chooseNorms = [];
+      for (let i = 0;i < res.data.data[0].goodsNormsEntities.length; i++){
+          let temp = {}
+          temp.normsName = res.data.data[0].normsName;
+          temp.normsValue = res.data.data[0].goodsNormsEntities[i].normsValue;
+          this.chooseNorms.push(temp)
+      }
+      // console.log(this.chooseNorms)
+      //第一次选取配置，结果集直接赋值
+      if (this.allList == undefined || this.allList.length <= 0){
+        for (let i = 0; i < this.chooseNorms.length; i++){
+            let temp = {}
+            this.$set(temp,this.chooseNorms[i].normsName,this.chooseNorms[i].normsValue)
+            // temp[`${this.chooseNorms[i].normsName}`]=this.chooseNorms[i].normsValue
+            this.allList.push(temp);
+        }
+        //结果集不为空，直接相乘得出最新结果集
+      } else{
+        let tempList = []
+        for (let i = 0; i < this.allList.length; i++){
+          for (let j = 0; j < this.chooseNorms.length;j++){
+              let temp = {}
+              temp = JSON.parse(JSON.stringify(this.allList[i]));
+              // console.log(temp)
+              this.$set(temp,this.chooseNorms[j].normsName,this.chooseNorms[j].normsValue);
+              // temp[`${this.chooseNorms[j].normsName}`]=this.chooseNorms[j].normsValue
+              // console.log('temp',temp)
+              tempList.push(temp)
+              // console.log(tempList)
+          }
+        }
+        // console.log("tempList",tempList)
+        this.allList = tempList;
+      }
+      // console.log(this.allList)
     },
     removeNorm(item) {
       for (let i = 0; i < this.list.length; i++) {
@@ -312,6 +348,23 @@ export default {
           j--;
         }
       }
+      //将包含删除normsName所有对象的该属性删除
+      for (let k = 0;k < this.allList.length;k++){
+        this.$delete(this.allList[k],item.normsName)
+      }
+      //去重
+      for (let i = 0; i < this.allList.length;i++){
+        for (let j = i + 1;j < this.allList.length; j++){
+          let r = JSON.stringify(this.allList[i]);
+          let l = JSON.stringify(this.allList[j]);
+          if ( r == l){
+            this.allList.splice(j, 1);
+            j--
+          }
+        }
+      }
+      // this.allList = new Set(this.allList)
+      // console.log("allList" , this.allList);
       //   console.log(this.normsNameList);
     },
     add() {
@@ -384,18 +437,26 @@ export default {
     showInput() {
       this.inputVisible = true;
     },
-    handleClose(items, item) {
+    handleClose(items, item,name) {
       item.splice(item.indexOf(items), 1);
+      //将删除的尺码从结果集中删除
+      for (let i = 0; i < this.allList.length;i++){
+        if (this.allList[i][`${name}`] === items.normsValue){
+          this.allList.splice(i,1);
+          i--;
+        }
+      }
+    console.log("allList",this.allList)
     },
     getTable() {
-      var adist = [];
-      for (var i = 0; i < this.list.length; i++) {
-        let temp = [];
-        for (var j = 0; j < this.list[i].goodsNormsEntities.length; j++) {
-          temp.push(this.list[i].goodsNormsEntities[j].normsValue);
-        }
-        adist.push(temp);
-      }
+      // var adist = [];
+      // for (var i = 0; i < this.list.length; i++) {
+      //   let temp = [];
+      //   for (var j = 0; j < this.list[i].goodsNormsEntities.length; j++) {
+      //     temp.push(this.list[i].goodsNormsEntities[j].normsValue);
+      //   }
+      //   adist.push(temp);
+      // }
     }
   }
 };
