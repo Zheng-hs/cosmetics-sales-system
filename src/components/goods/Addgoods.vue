@@ -165,7 +165,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="4">
-            <el-button>确定</el-button>
+            <el-button @click="getTable">确定</el-button>
           </el-col>
         </el-row>
         <div class="norms" v-for="item in list" :key="item.normsName">
@@ -178,7 +178,7 @@
               v-for="(items, i) in item.goodsNormsEntities"
               :key="i"
               closable
-              @close="handleClose(i, item)"
+              @close="handleClose(items, item.goodsNormsEntities)"
             >
               {{ items.normsValue }}
             </el-tag>
@@ -188,11 +188,17 @@
               v-model="normsValue"
               ref="saveTagInput"
               size="small"
-              @keyup.enter.native="handleInputConfirm()"
-              @blur="handleInputConfirm()"
+              @keyup.enter.native="handleInputConfirm(item.goodsNormsEntities)"
+              @blur="handleInputConfirm(item.goodsNormsEntities)"
             >
             </el-input>
-            <el-button v-else class="button-new-tag" size="small" @click="showInput()">+ New Tag</el-button>
+            <el-button
+              v-else
+              class="button-new-tag"
+              size="small"
+              @click="showInput()"
+              >+ New Tag</el-button
+            >
           </div>
         </div>
         <el-button type="primary" class="btnAdd" @click="add"
@@ -237,9 +243,12 @@ export default {
       normList: [],
       list: [],
       normsName: "",
-       inputVisible:false,
-       normsValue: '',
-       normsValueList: []
+      inputVisible: false,
+      normsValue: "",
+      normsValueList: [],
+      normsNameList: [],
+      alist: [],
+      blist: []
     };
   },
   created() {
@@ -270,9 +279,10 @@ export default {
       }
 
       this.normList = res.data.data;
-      console.log(this.normList);
+      //   console.log(this.normList);
     },
     async chooseNorm(val) {
+      this.normsValueList = [];
       const { data: res } = await this.$http.post("/api/v1/goodsNorms/search", {
         normsName: val
       });
@@ -286,9 +296,23 @@ export default {
         }
       }
       this.list.push(res.data.data[0]);
+      this.normsNameList.push(val);
+      console.log(this.list);
     },
     removeNorm(item) {
-        console.log(item);
+      for (let i = 0; i < this.list.length; i++) {
+        if (this.list[i] === item) {
+          this.list.splice(i, 1);
+          i--;
+        }
+      }
+      for (let j = 0; j < this.normsNameList.length; j++) {
+        if (this.normsNameList[j] === item.normsName) {
+          this.normsNameList.splice(j, 1);
+          j--;
+        }
+      }
+      //   console.log(this.normsNameList);
     },
     add() {
       this.$refs.addFormRef.validate(async valid => {
@@ -345,23 +369,34 @@ export default {
         }
       }
     },
-    handleInputConfirm (row) {
+    handleInputConfirm(item) {
+      this.normsValueList = [];
       if (this.normsValue.trim().length === 0) {
-        this.normsValue = ''
-        this.inputVisible = false
-        return
+        this.normsValue = "";
+        this.inputVisible = false;
+        return;
       }
-      this.normsValue = ''
-      this.inputVisible = false
+      var a = { normsValue: this.normsValue };
+      item.push(a);
+      this.normsValue = "";
+      this.inputVisible = false;
     },
-    showInput () {
-      this.inputVisible = true
-      // 让文本框自动获得焦点
-      // $nextTick方法的作用，就是当页面上元素被重新渲染之后，才会指定回调函数中的代码
-      this.$nextTick(() => {
-        this.$refs.saveTagInput.$refs.input.focus()
-      })
+    showInput() {
+      this.inputVisible = true;
     },
+    handleClose(items, item) {
+      item.splice(item.indexOf(items), 1);
+    },
+    getTable() {
+      var adist = [];
+      for (var i = 0; i < this.list.length; i++) {
+        let temp = [];
+        for (var j = 0; j < this.list[i].goodsNormsEntities.length; j++) {
+          temp.push(this.list[i].goodsNormsEntities[j].normsValue);
+        }
+        adist.push(temp);
+      }
+    }
   }
 };
 </script>
@@ -417,5 +452,8 @@ export default {
 }
 .normsName {
   margin-left: 10px;
+}
+.input-new-tag {
+  width: 120px;
 }
 </style>
