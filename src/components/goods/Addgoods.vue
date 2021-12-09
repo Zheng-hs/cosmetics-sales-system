@@ -188,8 +188,8 @@
               v-model="normsValue"
               ref="saveTagInput"
               size="small"
-              @keyup.enter.native="handleInputConfirm(item.goodsNormsEntities)"
-              @blur="handleInputConfirm(item.goodsNormsEntities)"
+              @keyup.enter.native="handleInputConfirm(item.goodsNormsEntities,item.normsName)"
+              @blur="handleInputConfirm(item.goodsNormsEntities,item.normsName)"
             >
             </el-input>
             <el-button
@@ -422,7 +422,7 @@ export default {
         }
       }
     },
-    handleInputConfirm(item) {
+    handleInputConfirm(item,normsName) {
       this.normsValueList = [];
       if (this.normsValue.trim().length === 0) {
         this.normsValue = "";
@@ -431,8 +431,39 @@ export default {
       }
       var a = { normsValue: this.normsValue };
       item.push(a);
+      //将该属性名从所有对象中移除
+      for (let k = 0;k < this.allList.length;k++){
+        this.$delete(this.allList[k],normsName)
+      }
+      //去重
+      for (let i = 0; i < this.allList.length;i++){
+        for (let j = i + 1;j < this.allList.length; j++){
+          let r = JSON.stringify(this.allList[i]);
+          let l = JSON.stringify(this.allList[j]);
+          if ( r == l){
+            this.allList.splice(j, 1);
+            j--
+          }
+        }
+      }
+      //重新组合
+      console.log("normsName",normsName)
+      console.log("item",item)
+      console.log("oAllList",this.allList)
+      let tempList = []
+        for (let i = 0; i < this.allList.length; i++){
+          for (let j = 0; j < item.length;j++){
+              let temp = {};
+              temp = JSON.parse(JSON.stringify(this.allList[i]));
+              this.$set(temp,normsName,item[j].normsValue);
+              tempList.push(temp)
+          }
+        }
+        // console.log("tempList",tempList)
+      this.allList = tempList;
       this.normsValue = "";
       this.inputVisible = false;
+      console.log("new",this.allList)
     },
     showInput() {
       this.inputVisible = true;
