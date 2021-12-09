@@ -16,6 +16,7 @@ import VueQuillEditor from 'vue-quill-editor'
 import 'quill/dist/quill.core.css' // import styles
 import 'quill/dist/quill.snow.css' // for snow theme
 import 'quill/dist/quill.bubble.css' // for bubble theme
+import '../src/icons'
 
 
 axios.defaults.baseURL = 'http://1.15.186.9:8006/'
@@ -36,7 +37,6 @@ Vue.prototype.$echarts = echarts
 Vue.config.productionTip = false
 
 Vue.component('tree-table', TreeTable)
-
 Vue.use(ElementUI)
 Vue.use(VueQuillEditor, /* { default global options } */ )
 
