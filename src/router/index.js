@@ -41,10 +41,6 @@ const routes = [{
         component: Users
       },
       {
-        path: '/userinfo',
-        component: UserInfo
-      },
-      {
         path: '/menu',
         component: Menu
       },

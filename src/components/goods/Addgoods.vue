@@ -175,9 +175,10 @@
           ></span>
           <div>
             <el-tag
+            id="tag"
               v-for="(items, i) in item.goodsNormsEntities"
               :key="i"
-              closable
+              :closable="item.goodsNormsEntities.length>1"
               @close="handleClose(items, item.goodsNormsEntities,item.normsName)"
             >
               {{ items.normsValue }}
@@ -217,6 +218,7 @@ export default {
       addForm: {},
       cateList: [],
       goodsList: [],
+      closable: true,
       addFormRules: {
         articlesClassifyId: [
           { required: true, message: "请选择公告分类", trigger: "blur" }

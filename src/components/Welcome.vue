@@ -1,31 +1,91 @@
 <template>
   <div>
-    <el-row :gutter="24">
+    <el-row class="title-top" :gutter="24">
       <el-col :span="6">
         <el-card>
+          <img class="icon1" src="../icons/svg/peoples.svg" alt="">
+        </el-card>
+      </el-col>
+      <el-col :span="6">
+        <el-card></el-card>
+      </el-col>
+      <el-col :span="6">
+        <el-card></el-card>
+      </el-col>
+      <el-col :span="6">
+        <el-card></el-card>
+      </el-col>
+    </el-row>
+    <el-row :gutter="24">
+      <el-col :span="8">
+        <el-card>
+          <el-button class="btn" @click="changeTimer" size="mini"
+            >选择时间</el-button
+          >
+          <div class="timer">
+            <el-date-picker
+              v-model="value"
+              type="daterange"
+              range-separator="至"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              @change="chooseTime1"
+              size="mini"
+              value-format="yyyy-MM-dd"
+              v-show="showTime"
+            >
+            </el-date-picker>
+          </div>
           <div id="countArticleView" style="width:100%; height:100%;"></div>
         </el-card>
       </el-col>
-      <el-col :span="6">
+      <el-col :span="8">
         <el-card>
-          <el-date-picker
-            v-model="value1"
-            type="daterange"
-            range-separator="至"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
-            @change="chooseTime"
-            size="mini"
+          <el-button class="btn1" @click="changeTimer1" size="mini"
+            >选择时间</el-button
           >
-          </el-date-picker>
+          <div class="timer1">
+            <el-date-picker
+              v-model="value2"
+              type="daterange"
+              range-separator="至"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              @change="chooseTime2"
+              size="mini"
+              value-format="yyyy-MM-dd"
+              v-show="showTime1"
+            >
+            </el-date-picker>
+          </div>
+          <div id="countGoodsSale" style="width:100%; height:100%;"></div>
         </el-card>
       </el-col>
-      <el-col :span="6">
-        <el-card></el-card>
+      <el-col :span="8">
+        <el-card>
+          <el-button class="btn2" @click="changeTimer2" size="mini"
+            >选择时间</el-button
+          >
+          <div class="timer2">
+            <el-date-picker
+              v-model="value1"
+              type="daterange"
+              range-separator="至"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              @change="chooseTime"
+              size="mini"
+              value-format="yyyy-MM-dd"
+              v-show="showTime2"
+            >
+            </el-date-picker>
+          </div>
+          <div id="countOrderStatus" style="width:100%; height:100%;"></div>
+        </el-card>
       </el-col>
-      <el-col :span="6">
+      <!-- <el-col :span="6">
         <el-card></el-card>
-      </el-col>
+      </el-col> -->
     </el-row>
     <el-card>
       <el-table
@@ -132,7 +192,14 @@ export default {
         currPage: 1,
         pageSize: 6
       },
+      showTime: false,
+      showTime1: false,
+      showTime2: false,
+      gettime: "",
+      gettime1: "",
+      value: "",
       value1: "",
+      value2: "",
       operationList: [],
       operationListSearch: {},
       total: 0,
@@ -154,24 +221,55 @@ export default {
     this.getOperitionList();
   },
   mounted() {
+    let yy = new Date().getFullYear();
+    let mm =
+      new Date().getMonth() + 1 < 10
+        ? "0" + (new Date().getMonth() + 1)
+        : new Date().getMonth() + 1;
+    let mm1 =
+      new Date().getMonth() < 10
+        ? "0" + new Date().getMonth()
+        : new Date().getMonth();
+    let dd =
+      new Date().getDate() < 10
+        ? "0" + new Date().getDate()
+        : new Date().getDate();
+    this.gettime = yy + "-" + mm + "-" + dd;
+    this.gettime1 = yy + "-" + mm1 + "-" + dd;
     this.getPie1();
+    this.getPie2();
+    this.getBar();
   },
   methods: {
+    changeTimer() {
+      this.showTime = !this.showTime;
+    },
+    changeTimer1() {
+      this.showTime1 = !this.showTime1;
+    },
+    changeTimer2() {
+      this.showTime2 = !this.showTime2;
+    },
     async getPie1() {
       let pie1 = this.$echarts.init(
         document.getElementById("countArticleView")
       );
       var option = {
         title: {
-          text: "浏览量最多的5篇文章",
+          text: "浏览量前五的商品",
           left: "center"
         },
         legend: {
-          orient: "vertical",
+          // orient: "vertical",
           bottom: "bottom"
+        },
+        tooltip: {
+          trigger: "item",
+          formatter: "{a} <br/>{b}: {c} ({d}%)"
         },
         series: [
           {
+            name: "销量",
             type: "pie",
             radius: [20, 70],
             center: ["50%", "50%"],
@@ -179,32 +277,295 @@ export default {
               "rgb(46,199,201)",
               "rgb(182,162,222)",
               "rgb(90,177,239)",
-              "rgb(255,285,128)",
+              "rgb(255,185,128)",
               "rgb(216,122,128)"
             ],
-            data: []
+            data: [],
+            roseType: "radius"
           }
         ]
       };
       const { data: res } = await this.$http.post(
-        "/api/v1/data-count/countArticleView"
+        `/api/v1/data-count/countGoodsBrowse?startDate=${this.gettime1}&endDate=${this.gettime}`
       );
       if (res.data.length > 0) {
         res.data = res.data.map(item => ({
-          name: item.articlesTitle,
-          value: item.articlesView
+          name: item.goodsName,
+          value: item.goodsBrowseValue
         }));
       }
       option.series[0].data = res.data;
       // console.log(res.data);
       option && pie1.setOption(option);
     },
+    async getPie2() {
+      let pie1 = this.$echarts.init(
+        document.getElementById("countOrderStatus")
+      );
+      var option = {
+        title: {
+          text: "订单状态",
+          left: "center"
+        },
+        legend: {
+          // orient: "vertical",
+          bottom: "bottom"
+        },
+        tooltip: {
+          trigger: "item",
+          formatter: "{a} <br/>{b}: {c} ({d}%)"
+        },
+        series: [
+          {
+            type: "pie",
+            name: "订单状态",
+            radius: [20, 70],
+            center: ["50%", "50%"],
+            // label: {
+            //   normal: {
+            //     show: true,
+            //     position: "inside",
+            //     formatter: "{d}%", //模板变量有 {a}、{b}、{c}、{d}，分别表示系列名，数据名，数据值，百分比。{d}数据会根据value值计算百分比
+
+            //     textStyle: {
+            //       align: "center",
+            //       baseline: "middle",
+            //       fontFamily: "微软雅黑",
+            //       fontSize: 15,
+            //       fontWeight: "bolder"
+            //     }
+            //   }
+            // },
+            data: [].sort(function(a, b) {
+              return a.value - b.value;
+            })
+          }
+        ]
+      };
+      const { data: res } = await this.$http.post(
+        `/api/v1/data-count/countOrderStatus?startDate=${this.gettime1}&endDate=${this.gettime}`
+      );
+      if (res.data.length > 0) {
+        res.data = res.data.map(item => ({
+          name: item.orderStatus,
+          value: item.orderStatusValue
+        }));
+      }
+
+      option.series[0].data = res.data;
+      // console.log(res.data);
+      option && pie1.setOption(option);
+    },
+    async getBar() {
+      let pie1 = this.$echarts.init(document.getElementById("countGoodsSale"));
+      var option = {
+        title: {
+          text: "销售量前五的商品",
+          left: "center"
+        },
+        xAxis: {
+          type: "category",
+          data: [],
+          axisLabel: {
+            interval: 0,
+            rotate: 30
+            //  showMinLabel: true,
+            //   showMaxLabel:true
+          },
+          axisLine: {
+            lineStyle: {
+              color: "rgb(0,138,205)"
+            }
+          }
+        },
+        yAxis: {
+          type: "value",
+          axisLine: {
+            show: true,
+            lineStyle: {
+              color: "rgb(0,138,205)"
+            }
+          }
+        },
+        legend: {
+          // orient: "vertical",
+          bottom: "bottom"
+        },
+        tooltip: {
+          trigger: "axis",
+          axisPointer: {
+            type: "shadow"
+          }
+        },
+        series: [
+          {
+            type: "bar",
+            showBackground: true,
+            itemStyle: {
+              color:'rgb(90,177,239)'
+            },
+            backgroundStyle: {
+              color: "rgba(180, 180, 180, 0.2)"
+            },
+            data: []
+          }
+        ]
+      };
+      const { data: res } = await this.$http.post(
+        `/api/v1/data-count/countGoodsSale?startDate=${this.gettime1}&endDate=${this.gettime}`
+      );
+      for (var i = 0; i < res.data.length; i++) {
+        // console.log(res.data[i]);
+        option.series[0].data.push(res.data[i].goodsSales);
+        option.xAxis.data.push(res.data[i].goodsName);
+      }
+      // console.log(res.data);
+      option && pie1.setOption(option);
+    },
     async chooseTime(data) {
-      console.log(this.value1);
-      var startDate = this.value1[0].toGMTString()
-      var endDate = this.value1[1].toGMTString()
-      const {data: res} = await this.$http.post(`/api/v1/data-count/countGoodsBrowse?startDate=${startDate}&endDate=${endDate}`)
-      console.log(res.data);
+      let pie1 = this.$echarts.init(
+        document.getElementById("countOrderStatus")
+      );
+      var option = {
+        title: {
+          text: "订单状态",
+          left: "center"
+        },
+        legend: {
+          // orient: "vertical",
+          bottom: "bottom"
+        },
+        tooltip: {
+          trigger: "item",
+          formatter: "{a} <br/>{b}: {c} ({d}%)"
+        },
+        series: [
+          {
+            type: "pie",
+            name: "订单状态",
+            radius: [20, 70],
+            center: ["50%", "50%"],
+            // color: [
+            //   "rgb(46,199,201)",
+            //   "rgb(182,162,222)",
+            //   "rgb(90,177,239)",
+            //   "rgb(255,185,128)",
+            //   "rgb(52,191,123)",
+            //   "rgb(216,122,128)",
+            // ],
+            data: [].sort(function(a, b) {
+              return a.value - b.value;
+            })
+          }
+        ]
+      };
+      const { data: res } = await this.$http.post(
+        `/api/v1/data-count/countGoodsBrowse?startDate=${this.value1[0]}&endDate=${this.value1[1]}`
+      );
+      if (res.data.length > 0) {
+        res.data = res.data.map(item => ({
+          name: item.orderStatus,
+          value: item.orderStatusValue
+        }));
+      }
+      option.series[0].data = res.data;
+      // console.log(res.data);
+      option && pie1.setOption(option);
+    },
+    async chooseTime1(data) {
+      let pie1 = this.$echarts.init(
+        document.getElementById("countArticleView")
+      );
+      var option = {
+        title: {
+          text: "浏览量前五的商品",
+          left: "center"
+        },
+        legend: {
+          // orient: "vertical",
+          bottom: "bottom"
+        },
+        tooltip: {
+          trigger: "item"
+        },
+        series: [
+          {
+            type: "pie",
+            name: "销量",
+            radius: [20, 70],
+            center: ["50%", "50%"],
+            color: [
+              "rgb(46,199,201)",
+              "rgb(182,162,222)",
+              "rgb(90,177,239)",
+              "rgb(255,185,128)",
+              "rgb(216,122,128)"
+            ],
+            data: [].sort(function(a, b) {
+              return a.value - b.value;
+            }),
+            roseType: "radius"
+          }
+        ]
+      };
+      const { data: res } = await this.$http.post(
+        `/api/v1/data-count/countGoodsBrowse?startDate=${this.value[0]}&endDate=${this.value[1]}`
+      );
+      if (res.data.length > 0) {
+        res.data = res.data.map(item => ({
+          name: item.goodsName,
+          value: item.goodsBrowseValue
+        }));
+      }
+      option.series[0].data = res.data;
+      // console.log(res.data);
+      option && pie1.setOption(option);
+    },
+    async chooseTime2(data) {
+      let pie1 = this.$echarts.init(document.getElementById("countGoodsSale"));
+      var option = {
+        title: {
+          text: "销售量前五的商品",
+          left: "center"
+        },
+        xAxis: {
+          type: "category",
+          data: []
+        },
+        yAxis: {
+          type: "value"
+        },
+        legend: {
+          // orient: "vertical",
+          bottom: "bottom"
+        },
+        tooltip: {
+          trigger: "axis",
+          axisPointer: {
+            type: "shadow"
+          }
+        },
+        series: [
+          {
+            type: "bar",
+            showBackground: true,
+            backgroundStyle: {
+              color: "rgba(180, 180, 180, 0.2)"
+            },
+            data: []
+          }
+        ]
+      };
+      const { data: res } = await this.$http.post(
+        `/api/v1/data-count/countGoodsSale?startDate=${this.value2[0]}&endDate=${this.value2[1]}`
+      );
+      for (var i = 0; i < res.data.length; i++) {
+        // console.log(res.data[i]);
+        option.series[0].data.push(res.data[i].goodsSales);
+        option.xAxis.data.push(res.data[i].goodsName);
+      }
+      // console.log(res.data);
+      option && pie1.setOption(option);
     },
     styleChange({ row, column, rowIndex, columnIndex }) {
       // console.log(row);
@@ -271,16 +632,77 @@ export default {
 <style lang="less" scoped>
 .el-row {
   margin: 20px 0;
-  height: 250px;
+  height: 350px;
   .el-col {
     height: 100%;
     .el-card {
+      position: relative;
       height: 100%;
       /deep/ .el-card__body {
         height: 95%;
         padding-top: 5px;
       }
+      .timer {
+        position: absolute;
+        top: 35px;
+        text-align: center;
+        width: 100%;
+        z-index: 100000;
+      }
+      .timer1 {
+        position: absolute;
+        top: 32px;
+        text-align: center;
+        width: 100%;
+        z-index: 100000;
+      }
+      .timer2 {
+        position: absolute;
+        top: 35px;
+        text-align: center;
+        width: 100%;
+        z-index: 100000;
+      }
+      .btn {
+        position: absolute;
+        top: 5px;
+        left: 5px;
+        z-index: 100000;
+      }
+      .btn1 {
+        position: absolute;
+        top: 5px;
+        left: 5px;
+        z-index: 100000;
+      }
+      .btn2 {
+        position: absolute;
+        top: 5px;
+        left: 5px;
+        z-index: 100000;
+      }
     }
   }
 }
+.title-top {
+  height: 100px;
+}
+.icon1 {
+      line-height: 1.15;
+    -webkit-text-size-adjust: 100%;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    font-family: Helvetica Neue,Helvetica,PingFang SC,Hiragino Sans GB,Microsoft YaHei,Arial,sans-serif;
+    cursor: pointer;
+    color: #40c9c6;
+    box-sizing: inherit;
+    width: 1em;
+    height: 1em;
+    vertical-align: -.15em;
+    fill: currentColor;
+    overflow: hidden;
+    float: left;
+    font-size: 48px;
+}
+
 </style>
