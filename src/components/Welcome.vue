@@ -145,6 +145,17 @@
         <el-card></el-card>
       </el-col> -->
     </el-row>
+    <el-row :gutter="40">
+      <el-col>
+        <el-card>
+           <el-button class="btn2" size="medium">天</el-button>
+           <el-button class="btn3" size="medium">月</el-button>
+           <el-button class="btn4" size="medium">年</el-button>
+          <div id="countSalesByDays" style="width:100%; height:100%">
+          </div>
+        </el-card>
+      </el-col>
+    </el-row>
     <el-card>
       <el-table
         :data="operationList"
@@ -269,6 +280,7 @@ export default {
       operationList: [],
       operationListSearch: {},
       total: 0,
+      timer: null,
       typeOptions: [
         { label: "全部", value: "" },
         { label: "查询", value: "0" },
@@ -283,9 +295,16 @@ export default {
       ]
     };
   },
-  created() {
+  created: function() {
     this.getOperitionList();
     this.getNum();
+    clearInterval(this.timer);
+    this.timer = null;
+    this.setTimer();
+  },
+  destroyed: function () {
+    clearInterval(this.timer);
+    this.timer = null;
   },
   mounted() {
     let yy = new Date().getFullYear();
@@ -306,6 +325,7 @@ export default {
     this.getPie1();
     this.getPie2();
     this.getBar();
+    this.getCountDay();
   },
   methods: {
     async getNum() {
@@ -709,7 +729,103 @@ export default {
     handleCurrentChange(newPage) {
       this.queryInfo.currPage = newPage;
       this.getOperitionList();
+    },
+    setTimer() {
+      if (this.timer == null){
+        this.timer = setInterval(() => {
+          console.log('开始定时...没过一秒执行一次');
+          this.getOperitionList();
+          this.getNum();
+        },20000)
+      }
+    },
+    async getCountDay(){
+      let myChart = this.$echarts.init(document.getElementById('countSalesByDays'));
+      let option = {
+  tooltip: {
+    trigger: 'axis',
+    axisPointer: { type: 'cross' }
+  },
+  legend: {},
+  xAxis: [
+    {
+      type: 'category',
+      axisTick: {
+        alignWithLabel: true
+      },
+      data: [
+        '1月',
+        '2月',
+        '3月',
+        '4月',
+        '5月',
+        '6月',
+        '7月',
+        '8月',
+        '9月',
+        '10月',
+        '11月',
+        '12月'
+      ]
     }
+  ],
+  yAxis: [
+    {
+      type: 'value',
+      name: '订单数',
+      min: 0,
+      max: 250,
+      position: 'right',
+      axisLabel: {
+        formatter: '{value} 个'
+      }
+    },
+    {
+      type: 'value',
+      name: '销售额',
+      min: 0,
+      max: 25,
+      position: 'left',
+      axisLabel: {
+        formatter: '{value} ¥'
+      }
+    }
+  ],
+  series: [
+    {
+      name: '订单数',
+      type: 'bar',
+      yAxisIndex: 0,
+      data: [6, 32, 70, 86, 68.7, 100.7, 125.6, 112.2, 78.7, 48.8, 36.0, 19.3]
+    },
+    {
+      name: '销售额',
+      type: 'line',
+      smooth: true,
+      yAxisIndex: 1,
+      data: [
+        6.0,
+        10.2,
+        10.3,
+        11.5,
+        10.3,
+        13.2,
+        14.3,
+        16.4,
+        18.0,
+        16.5,
+        12.0,
+        5.2
+      ]
+    }
+  ]
+};
+      
+      myChart.setOption(option);
+      //建议加上以下这一行代码，不加的效果图如下（当浏览器窗口缩小的时候）。超过了div的界限（红色边框）
+      window.addEventListener('resize',function() {myChart.resize()});
+    }
+     
   }
 };
 </script>
@@ -763,7 +879,19 @@ export default {
       .btn2 {
         position: absolute;
         top: 5px;
-        left: 5px;
+        left: 250px;
+        z-index: 100000;
+      }
+      .btn3 {
+        position: absolute;
+        top: 5px;
+        left: 320px;
+        z-index: 100000;
+      }
+      .btn4 {
+        position: absolute;
+        top: 5px;
+        left: 400px;
         z-index: 100000;
       }
     }

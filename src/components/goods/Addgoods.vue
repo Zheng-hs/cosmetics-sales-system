@@ -273,6 +273,39 @@ export default {
       chooseNorms: [],
       tableHeader: '',
       tableHeader1: '',
+
+      //商品新增
+      goodsEntity: {
+        //分类id
+        classifyId : "",
+        //分类父id
+        classifyParentId : "",
+        goodsDescribe : "",
+        goodsName : "",
+        //原价
+        goodsOldPrice : 0,
+        //现价
+        goodsNewPrice : 0,
+        //主图
+        mainImage : "",
+        //多张图片
+        subImageList : [],
+        //数组里面多个对象
+        goodsNormsEntityList: [
+          {
+            //原价
+            goodsOriginPrice: "",
+            //现价
+            goodsPrice: "",
+            //库存
+            goodsStock: "",
+            //属性名数组 例如 "颜色","尺码"
+            normsNameList: [],
+            //属性对应的值 例如 "黑","x"
+            normsValueList: []
+          }
+        ],
+      }
     };
   },
   created() {
