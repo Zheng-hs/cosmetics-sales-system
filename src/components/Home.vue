@@ -180,6 +180,7 @@ export default {
 }
 .el-dropdown-link {
   color: #fff;
+  font-weight: bold;
 }
 .toggle-button {
   color: #fff;

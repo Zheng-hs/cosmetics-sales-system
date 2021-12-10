@@ -1,59 +1,79 @@
 <template>
   <div>
     <el-row :gutter="40" class="panel-group">
-    <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-      <div class="card-panel">
-        <div class="card-panel-icon-wrapper icon-people">
-          <svg-icon icon-class="peoples" class-name="card-panel-icon" />
-        </div>
-        <div class="card-panel-description">
-          <div class="card-panel-text">
-            New Visits
+      <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
+        <div class="card-panel">
+          <div class="card-panel-icon-wrapper icon-people">
+            <svg-icon icon-class="peoples" class-name="card-panel-icon" />
           </div>
-          <count-to :start-val="0" :end-val="102400" :duration="2600" class="card-panel-num" />
-        </div>
-      </div>
-    </el-col>
-    <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-      <div class="card-panel">
-        <div class="card-panel-icon-wrapper icon-message">
-          <svg-icon icon-class="message" class-name="card-panel-icon" />
-        </div>
-        <div class="card-panel-description">
-          <div class="card-panel-text">
-            Messages
+          <div class="card-panel-description">
+            <div class="card-panel-text">
+              今日用户访问量
+            </div>
+            <count-to
+              :start-val="0"
+              :end-val="num1"
+              :duration="2600"
+              class="card-panel-num"
+            />
           </div>
-          <count-to :start-val="0" :end-val="81212" :duration="3000" class="card-panel-num" />
         </div>
-      </div>
-    </el-col>
-    <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-      <div class="card-panel">
-        <div class="card-panel-icon-wrapper icon-money">
-          <svg-icon icon-class="money" class-name="card-panel-icon" />
-        </div>
-        <div class="card-panel-description">
-          <div class="card-panel-text">
-            Purchases
+      </el-col>
+      <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
+        <div class="card-panel">
+          <div class="card-panel-icon-wrapper icon-message">
+            <svg-icon icon-class="search" class-name="card-panel-icon" />
           </div>
-           <count-to :start-val="0" :end-val="9280" :duration="3200" class="card-panel-num" />
-        </div>
-      </div>
-    </el-col>
-    <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-      <div class="card-panel">
-        <div class="card-panel-icon-wrapper icon-shopping">
-          <svg-icon icon-class="shopping" class-name="card-panel-icon" />
-        </div>
-        <div class="card-panel-description">
-          <div class="card-panel-text">
-            Shoppings
+          <div class="card-panel-description">
+            <div class="card-panel-text">
+              今日商品浏览量
+            </div>
+            <count-to
+              :start-val="0"
+              :end-val="num2"
+              :duration="3000"
+              class="card-panel-num"
+            />
           </div>
-           <count-to :start-val="0" :end-val="13600" :duration="3600" class="card-panel-num" />
         </div>
-      </div>
-    </el-col>
-  </el-row>
+      </el-col>
+      <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
+        <div class="card-panel">
+          <div class="card-panel-icon-wrapper icon-money">
+            <svg-icon icon-class="money" class-name="card-panel-icon" />
+          </div>
+          <div class="card-panel-description">
+            <div class="card-panel-text">
+              今日销售总金额
+            </div>
+            <count-to
+              :start-val="0"
+              :end-val="num3"
+              :duration="3200"
+              class="card-panel-num"
+            />
+          </div>
+        </div>
+      </el-col>
+      <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
+        <div class="card-panel">
+          <div class="card-panel-icon-wrapper icon-shopping">
+            <svg-icon icon-class="shopping" class-name="card-panel-icon" />
+          </div>
+          <div class="card-panel-description">
+            <div class="card-panel-text">
+              今日订单总数
+            </div>
+            <count-to
+              :start-val="0"
+              :end-val="num4"
+              :duration="3600"
+              class="card-panel-num"
+            />
+          </div>
+        </div>
+      </el-col>
+    </el-row>
     <el-row :gutter="24">
       <el-col :span="8">
         <el-card>
@@ -222,7 +242,7 @@
 </template>
 
 <script>
-import CountTo from 'vue-count-to'
+import CountTo from "vue-count-to";
 export default {
   components: {
     CountTo
@@ -242,6 +262,10 @@ export default {
       value: "",
       value1: "",
       value2: "",
+      num1: 0,
+      num2: 0,
+      num3: 0,
+      num4: 0,
       operationList: [],
       operationListSearch: {},
       total: 0,
@@ -261,6 +285,7 @@ export default {
   },
   created() {
     this.getOperitionList();
+    this.getNum();
   },
   mounted() {
     let yy = new Date().getFullYear();
@@ -283,6 +308,24 @@ export default {
     this.getBar();
   },
   methods: {
+    async getNum() {
+      const { data: res } = await this.$http.get(
+        "/api/v1/data-count/getUserViewToday"
+      );
+      this.num1 = res.data;
+      const { data: res1 } = await this.$http.get(
+        "/api/v1/data-count/getAllViewToday"
+      );
+      this.num2 = res1.data;
+      const { data: res2 } = await this.$http.get(
+        "/api/v1/data-count/getAllSalesPriceToday"
+      );
+      this.num3 = res2.data;
+      const { data: res3 } = await this.$http.get(
+        "/api/v1/data-count/getAllOrderCountToday"
+      );
+      this.num4 = res3.data;
+    },
     changeTimer() {
       this.showTime = !this.showTime;
     },
@@ -444,7 +487,7 @@ export default {
             type: "bar",
             showBackground: true,
             itemStyle: {
-              color:'rgb(90,177,239)'
+              color: "rgb(90,177,239)"
             },
             backgroundStyle: {
               color: "rgba(180, 180, 180, 0.2)"
@@ -746,8 +789,8 @@ export default {
     overflow: hidden;
     color: #666;
     background: #fff;
-    box-shadow: 4px 4px 40px rgba(0, 0, 0, .05);
-    border-color: rgba(0, 0, 0, .05);
+    box-shadow: 4px 4px 40px rgba(0, 0, 0, 0.05);
+    border-color: rgba(0, 0, 0, 0.05);
 
     &:hover {
       .card-panel-icon-wrapper {
@@ -767,7 +810,7 @@ export default {
       }
 
       .icon-shopping {
-        background: #34bfa3
+        background: #34bfa3;
       }
     }
 
@@ -784,7 +827,7 @@ export default {
     }
 
     .icon-shopping {
-      color: #34bfa3
+      color: #34bfa3;
     }
 
     .card-panel-icon-wrapper {
@@ -805,6 +848,7 @@ export default {
       font-weight: bold;
       margin: 26px;
       margin-left: 0px;
+      text-align: center;
 
       .card-panel-text {
         line-height: 18px;
@@ -815,12 +859,14 @@ export default {
 
       .card-panel-num {
         font-size: 20px;
+
+        width: 100%;
       }
     }
   }
 }
 
-@media (max-width:550px) {
+@media (max-width: 550px) {
   .card-panel-description {
     display: none;
   }
@@ -838,5 +884,4 @@ export default {
     }
   }
 }
-
 </style>
