@@ -164,9 +164,9 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <!-- <el-col :span="4">
+          <el-col :span="4">
             <el-button @click="getTable">确定</el-button>
-          </el-col> -->
+          </el-col>
         </el-row>
         <div class="norms" v-for="item in list" :key="item.normsName">
           <span class="normsName">{{ item.normsName }}</span>
@@ -202,6 +202,25 @@
             >
           </div>
         </div>
+        <el-table :data="allList" border stripe>
+           <el-table-column type="index"></el-table-column>
+        <el-table-column v-for="item in normsNameList" :key="item" :label="item" :prop="item"></el-table-column>
+        <el-table-column label="原价" prop="goodsOriginPrice">
+           <template slot-scope="scope">
+            <el-input v-model="scope.row.goodsOriginPrice"></el-input>
+          </template>
+        </el-table-column>
+        <el-table-column label="现价" prop="goodsPrice">
+           <template slot-scope="scope">
+            <el-input v-model="scope.row.goodsPrice"></el-input>
+          </template>
+        </el-table-column>
+        <el-table-column label="库存" prop="goodsStock">
+           <template slot-scope="scope">
+            <el-input v-model="scope.row.goodsStock"></el-input>
+          </template>
+        </el-table-column>
+        </el-table>
         <el-button type="primary" class="btnAdd" @click="add"
           >添加公告</el-button
         >
@@ -233,7 +252,6 @@ export default {
           { required: true, message: "请输入公告描述", trigger: "blur" }
         ]
       },
-      quillUpdateImg: false, // 根据图片上传状态来确定是否显示loading动画，刚开始是false,不显示
       uploadURL: "http://1.15.186.9:8006/api/v1/upload",
       imageUrl: "",
       isShow: true,
@@ -253,6 +271,8 @@ export default {
       blist: [],
       allList: [],
       chooseNorms: [],
+      tableHeader: '',
+      tableHeader1: '',
     };
   },
   created() {
@@ -308,7 +328,8 @@ export default {
           temp.normsValue = res.data.data[0].goodsNormsEntities[i].normsValue;
           this.chooseNorms.push(temp)
       }
-      // console.log(this.chooseNorms)
+      this.tableHeader = this.normsNameList[0]
+      this.tableHeader1 = this.normsNameList[1]
       //第一次选取配置，结果集直接赋值
       if (this.allList == undefined || this.allList.length <= 0){
         for (let i = 0; i < this.chooseNorms.length; i++){
@@ -335,7 +356,7 @@ export default {
         // console.log("tempList",tempList)
         this.allList = tempList;
       }
-      // console.log(this.allList)
+      console.log(this.allList)
     },
     removeNorm(item) {
       for (let i = 0; i < this.list.length; i++) {
