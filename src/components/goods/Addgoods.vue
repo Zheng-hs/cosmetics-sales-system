@@ -175,11 +175,13 @@
           ></span>
           <div>
             <el-tag
-            id="tag"
+              id="tag"
               v-for="(items, i) in item.goodsNormsEntities"
               :key="i"
-              :closable="item.goodsNormsEntities.length>1"
-              @close="handleClose(items, item.goodsNormsEntities,item.normsName)"
+              :closable="item.goodsNormsEntities.length > 1"
+              @close="
+                handleClose(items, item.goodsNormsEntities, item.normsName)
+              "
             >
               {{ items.normsValue }}
             </el-tag>
@@ -189,8 +191,12 @@
               v-model="normsValue"
               ref="saveTagInput"
               size="small"
-              @keyup.enter.native="handleInputConfirm(item.goodsNormsEntities,item.normsName)"
-              @blur="handleInputConfirm(item.goodsNormsEntities,item.normsName)"
+              @keyup.enter.native="
+                handleInputConfirm(item.goodsNormsEntities, item.normsName)
+              "
+              @blur="
+                handleInputConfirm(item.goodsNormsEntities, item.normsName)
+              "
             >
             </el-input>
             <el-button
@@ -202,24 +208,52 @@
             >
           </div>
         </div>
-        <el-table :data="allList" border stripe>
-           <el-table-column type="index"></el-table-column>
-        <el-table-column v-for="item in normsNameList" :key="item" :label="item" :prop="item"></el-table-column>
-        <el-table-column label="原价" prop="goodsOriginPrice">
-           <template slot-scope="scope">
-            <el-input v-model="scope.row.goodsOriginPrice"></el-input>
-          </template>
-        </el-table-column>
-        <el-table-column label="现价" prop="goodsPrice">
-           <template slot-scope="scope">
-            <el-input v-model="scope.row.goodsPrice"></el-input>
-          </template>
-        </el-table-column>
-        <el-table-column label="库存" prop="goodsStock">
-           <template slot-scope="scope">
-            <el-input v-model="scope.row.goodsStock"></el-input>
-          </template>
-        </el-table-column>
+        <el-table :data="allList" border stripe v-show="tableShow">
+          <el-table-column type="index"></el-table-column>
+          <el-table-column
+            v-for="item in normsNameList"
+            :key="item"
+            :label="item"
+            :prop="item"
+          ></el-table-column>
+          <el-table-column label="原价" prop="goodsOriginPrice">
+            <template slot-scope="scope">
+              <el-input
+                v-model="scope.row.goodsOriginPrice"
+                @keyup.enter.native="handleCurrentChange(scope.row,scope.$index)"
+                @blur="handleCurrentChange(scope.row,scope.$index)"
+              ></el-input>
+            </template>
+          </el-table-column>
+          <el-table-column label="现价" prop="goodsPrice">
+            <template slot-scope="scope">
+              <el-input
+                v-model="scope.row.goodsPrice"
+                @keyup.enter.native="handleCurrentChange(scope.row,scope.$index)"
+                @blur="handleCurrentChange(scope.row,scope.$index)"
+              ></el-input>
+            </template>
+          </el-table-column>
+          <el-table-column label="库存" prop="goodsStock">
+            <template slot-scope="scope">
+              <el-input
+                v-model="scope.row.goodsStock"
+                @keyup.enter.native="handleCurrentChange(scope.row,scope.$index)"
+                @blur="handleCurrentChange(scope.row,scope.$index)"
+              ></el-input>
+            </template>
+          </el-table-column>
+          <!-- <el-table-column label="操作" width="180px">
+            <template slot-scope="scope">
+              <el-button
+                type="primary"
+                icon="el-icon-edit"
+                size="mini"
+                @click="showEditDialog(scope.row,scope.$index)"
+                >确认</el-button
+              >
+            </template>
+          </el-table-column> -->
         </el-table>
         <el-button type="primary" class="btnAdd" @click="add"
           >添加公告</el-button
@@ -234,23 +268,24 @@ export default {
   data() {
     return {
       activeIndex: "0",
+      tableShow: false,
       addForm: {},
       cateList: [],
       goodsList: [],
       closable: true,
       addFormRules: {
         articlesClassifyId: [
-          { required: true, message: "请选择公告分类", trigger: "blur" }
+          { required: true, message: "请选择公告分类", trigger: "blur" },
         ],
         articlesTitle: [
-          { required: true, message: "请输入公告标题", trigger: "blur" }
+          { required: true, message: "请输入公告标题", trigger: "blur" },
         ],
         articlesAuthor: [
-          { required: true, message: "请输入作者", trigger: "blur" }
+          { required: true, message: "请输入作者", trigger: "blur" },
         ],
         articlesDescribe: [
-          { required: true, message: "请输入公告描述", trigger: "blur" }
-        ]
+          { required: true, message: "请输入公告描述", trigger: "blur" },
+        ],
       },
       uploadURL: "http://1.15.186.9:8006/api/v1/upload",
       imageUrl: "",
@@ -271,41 +306,26 @@ export default {
       blist: [],
       allList: [],
       chooseNorms: [],
-      tableHeader: '',
-      tableHeader1: '',
+      goodsNormsEntityList: [],
 
       //商品新增
       goodsEntity: {
         //分类id
-        classifyId : "",
+        classifyId: "",
         //分类父id
-        classifyParentId : "",
-        goodsDescribe : "",
-        goodsName : "",
+        classifyParentId: "",
+        goodsDescribe: "",
+        goodsName: "",
         //原价
-        goodsOldPrice : 0,
+        goodsOldPrice: 0,
         //现价
-        goodsNewPrice : 0,
+        goodsNewPrice: 0,
         //主图
-        mainImage : "",
+        mainImage: "",
         //多张图片
-        subImageList : [],
+        subImageList: [],
         //数组里面多个对象
-        goodsNormsEntityList: [
-          {
-            //原价
-            goodsOriginPrice: "",
-            //现价
-            goodsPrice: "",
-            //库存
-            goodsStock: "",
-            //属性名数组 例如 "颜色","尺码"
-            normsNameList: [],
-            //属性对应的值 例如 "黑","x"
-            normsValueList: []
-          }
-        ],
-      }
+      },
     };
   },
   created() {
@@ -313,6 +333,42 @@ export default {
     this.getNormList();
   },
   methods: {
+    showEditDialog(row,index) {
+      
+        console.log(index);
+    
+    },
+    handleCurrentChange(row,index) {
+      if (
+        row.goodsOriginPrice !== undefined &&
+        row.goodsPrice !== undefined &&
+        row.goodsStock !== undefined
+      ) {
+        for (let i = 0; i < this.normsNameList.length; i++) {
+          let name = this.normsNameList[i];
+          this.normsValueList.push(row[name]);
+        }
+        let temp = {};
+        this.$set(temp, "normsNameList", this.normsNameList);
+        this.$set(temp, "normsValueList", this.normsValueList);
+        this.$set(temp, "goodsOriginPrice", row.goodsOriginPrice);
+        this.$set(temp, "goodsPrice", row.goodsPrice);
+        this.$set(temp, "goodsStock", row.goodsStock);
+        // this.goodsNormsEntityList.push(temp);
+        this.goodsNormsEntityList[index] = temp
+        // console.log(Object.assign(this.goodsNormsEntityList[index],temp));
+        // this.goodsNormsEntityList.map((item, index) => {
+        //   console.log(1111);
+        //  if(item === temp) {
+        //     this.goodsNormsEntityList.splice(index, 1);
+        //  }
+          
+        // });
+        
+        this.normsValueList = [];
+        console.log(this.goodsNormsEntityList);
+      }
+    },
     async getCateList() {
       const { data: res } = await this.$http.post(
         "/api/v1/goodsClassify/search",
@@ -341,7 +397,7 @@ export default {
     async chooseNorm(val) {
       this.normsValueList = [];
       const { data: res } = await this.$http.post("/api/v1/goodsNorms/search", {
-        normsName: val
+        normsName: val,
       });
 
       if (res.code !== 200) {
@@ -355,41 +411,47 @@ export default {
       this.list.push(res.data.data[0]);
       this.normsNameList.push(val);
       this.chooseNorms = [];
-      for (let i = 0;i < res.data.data[0].goodsNormsEntities.length; i++){
-          let temp = {}
-          temp.normsName = res.data.data[0].normsName;
-          temp.normsValue = res.data.data[0].goodsNormsEntities[i].normsValue;
-          this.chooseNorms.push(temp)
+      for (let i = 0; i < res.data.data[0].goodsNormsEntities.length; i++) {
+        let temp = {};
+        temp.normsName = res.data.data[0].normsName;
+        temp.normsValue = res.data.data[0].goodsNormsEntities[i].normsValue;
+        this.chooseNorms.push(temp);
       }
-      this.tableHeader = this.normsNameList[0]
-      this.tableHeader1 = this.normsNameList[1]
       //第一次选取配置，结果集直接赋值
-      if (this.allList == undefined || this.allList.length <= 0){
-        for (let i = 0; i < this.chooseNorms.length; i++){
-            let temp = {}
-            this.$set(temp,this.chooseNorms[i].normsName,this.chooseNorms[i].normsValue)
-            // temp[`${this.chooseNorms[i].normsName}`]=this.chooseNorms[i].normsValue
-            this.allList.push(temp);
+      if (this.allList == undefined || this.allList.length <= 0) {
+        for (let i = 0; i < this.chooseNorms.length; i++) {
+          let temp = {};
+          this.$set(
+            temp,
+            this.chooseNorms[i].normsName,
+            this.chooseNorms[i].normsValue
+          );
+          // temp[`${this.chooseNorms[i].normsName}`]=this.chooseNorms[i].normsValue
+          this.allList.push(temp);
         }
         //结果集不为空，直接相乘得出最新结果集
-      } else{
-        let tempList = []
-        for (let i = 0; i < this.allList.length; i++){
-          for (let j = 0; j < this.chooseNorms.length;j++){
-              let temp = {}
-              temp = JSON.parse(JSON.stringify(this.allList[i]));
-              // console.log(temp)
-              this.$set(temp,this.chooseNorms[j].normsName,this.chooseNorms[j].normsValue);
-              // temp[`${this.chooseNorms[j].normsName}`]=this.chooseNorms[j].normsValue
-              // console.log('temp',temp)
-              tempList.push(temp)
-              // console.log(tempList)
+      } else {
+        let tempList = [];
+        for (let i = 0; i < this.allList.length; i++) {
+          for (let j = 0; j < this.chooseNorms.length; j++) {
+            let temp = {};
+            temp = JSON.parse(JSON.stringify(this.allList[i]));
+            // console.log(temp)
+            this.$set(
+              temp,
+              this.chooseNorms[j].normsName,
+              this.chooseNorms[j].normsValue
+            );
+            // temp[`${this.chooseNorms[j].normsName}`]=this.chooseNorms[j].normsValue
+            // console.log('temp',temp)
+            tempList.push(temp);
+            // console.log(tempList)
           }
         }
         // console.log("tempList",tempList)
         this.allList = tempList;
       }
-      console.log(this.allList)
+      console.log(this.allList);
     },
     removeNorm(item) {
       for (let i = 0; i < this.list.length; i++) {
@@ -405,17 +467,17 @@ export default {
         }
       }
       //将包含删除normsName所有对象的该属性删除
-      for (let k = 0;k < this.allList.length;k++){
-        this.$delete(this.allList[k],item.normsName)
+      for (let k = 0; k < this.allList.length; k++) {
+        this.$delete(this.allList[k], item.normsName);
       }
       //去重
-      for (let i = 0; i < this.allList.length;i++){
-        for (let j = i + 1;j < this.allList.length; j++){
+      for (let i = 0; i < this.allList.length; i++) {
+        for (let j = i + 1; j < this.allList.length; j++) {
           let r = JSON.stringify(this.allList[i]);
           let l = JSON.stringify(this.allList[j]);
-          if ( r == l){
+          if (r == l) {
             this.allList.splice(j, 1);
-            j--
+            j--;
           }
         }
       }
@@ -424,28 +486,38 @@ export default {
       //   console.log(this.normsNameList);
     },
     add() {
-      this.$refs.addFormRef.validate(async valid => {
+      this.$refs.addFormRef.validate(async (valid) => {
         if (!valid) {
           return this.$message.error("请填写必要的表单项!");
         }
         //  发起请求添加商品
         // 商品的名称，必须是唯一的
         const { data: res } = await this.$http.post(
-          "/api/v1/articles/add",
-          this.addForm
+          "/api/v1/goods/saveGoods",
+         {
+           classifyId: this.addForm.classifyId,
+           classifyParentId: this.addForm.classifyParentId,
+           goodsDescribe:this.addForm.goodsDescribe,
+           goodsName: this.addForm.goodsName,
+           goodsNewPrice: this.addForm.goodsNewPrice,
+           goodsOldPrice: this.addForm.goodsOldPrice,
+           mainImage: this.userPicture,
+           subImageList: this.subImageList,
+           goodsNormsEntityList: this.goodsNormsEntityList
+         }
         );
         if (res.code !== 200) {
-          return this.$message.error("添加公告失败!");
+          return this.$message.error("添加商品失败!");
         }
-        this.$message.success("添加公告成功!");
-        this.$router.push("/invoice");
+        this.$message.success("添加商品成功!");
+        this.$router.push("/goods");
       });
     },
     async choose(val) {
       const { data: res } = await this.$http.post(
         "/api/v1/goodsClassify/search",
         {
-          classifyId: val
+          classifyId: val,
         }
       );
       this.goodsList = res.data.data[0].goodsClassifyEntities;
@@ -478,7 +550,7 @@ export default {
         }
       }
     },
-    handleInputConfirm(item,normsName) {
+    handleInputConfirm(item, normsName) {
       this.normsValueList = [];
       if (this.normsValue.trim().length === 0) {
         this.normsValue = "";
@@ -488,64 +560,57 @@ export default {
       var a = { normsValue: this.normsValue };
       item.push(a);
       //将该属性名从所有对象中移除
-      for (let k = 0;k < this.allList.length;k++){
-        this.$delete(this.allList[k],normsName)
+      for (let k = 0; k < this.allList.length; k++) {
+        this.$delete(this.allList[k], normsName);
       }
       //去重
-      for (let i = 0; i < this.allList.length;i++){
-        for (let j = i + 1;j < this.allList.length; j++){
+      for (let i = 0; i < this.allList.length; i++) {
+        for (let j = i + 1; j < this.allList.length; j++) {
           let r = JSON.stringify(this.allList[i]);
           let l = JSON.stringify(this.allList[j]);
-          if ( r == l){
+          if (r == l) {
             this.allList.splice(j, 1);
-            j--
+            j--;
           }
         }
       }
       //重新组合
-      console.log("normsName",normsName)
-      console.log("item",item)
-      console.log("oAllList",this.allList)
-      let tempList = []
-        for (let i = 0; i < this.allList.length; i++){
-          for (let j = 0; j < item.length;j++){
-              let temp = {};
-              temp = JSON.parse(JSON.stringify(this.allList[i]));
-              this.$set(temp,normsName,item[j].normsValue);
-              tempList.push(temp)
-          }
+      console.log("normsName", normsName);
+      console.log("item", item);
+      console.log("oAllList", this.allList);
+      let tempList = [];
+      for (let i = 0; i < this.allList.length; i++) {
+        for (let j = 0; j < item.length; j++) {
+          let temp = {};
+          temp = JSON.parse(JSON.stringify(this.allList[i]));
+          this.$set(temp, normsName, item[j].normsValue);
+          tempList.push(temp);
         }
-        // console.log("tempList",tempList)
+      }
+      // console.log("tempList",tempList)
       this.allList = tempList;
       this.normsValue = "";
       this.inputVisible = false;
-      console.log("new",this.allList)
+      console.log("new", this.allList);
     },
     showInput() {
       this.inputVisible = true;
     },
-    handleClose(items, item,name) {
+    handleClose(items, item, name) {
       item.splice(item.indexOf(items), 1);
       //将删除的尺码从结果集中删除
-      for (let i = 0; i < this.allList.length;i++){
-        if (this.allList[i][`${name}`] === items.normsValue){
-          this.allList.splice(i,1);
+      for (let i = 0; i < this.allList.length; i++) {
+        if (this.allList[i][`${name}`] === items.normsValue) {
+          this.allList.splice(i, 1);
           i--;
         }
       }
-    console.log("allList",this.allList)
+      console.log("allList", this.allList);
     },
     getTable() {
-      // var adist = [];
-      // for (var i = 0; i < this.list.length; i++) {
-      //   let temp = [];
-      //   for (var j = 0; j < this.list[i].goodsNormsEntities.length; j++) {
-      //     temp.push(this.list[i].goodsNormsEntities[j].normsValue);
-      //   }
-      //   adist.push(temp);
-      // }
-    }
-  }
+      this.tableShow = !this.tableShow
+    },
+  },
 };
 </script>
 
