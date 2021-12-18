@@ -20,29 +20,7 @@
             </el-option>
           </el-select>
         </el-col>
-        <el-col :span="8" v-if="select === 'sex'">
-          <el-select clearable  @clear="getUserList" v-model="queryInfo.query" placeholder="请选择" @change="getUserList1">
-            <el-option
-              v-for="item in sexList"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            >
-            </el-option>
-          </el-select>
-        </el-col>
-        <el-col :span="8" v-else-if="select === 'roleType'">
-          <el-select clearable  @clear="getUserList" v-model="queryInfo.query" placeholder="请选择" @change="getUserList1">
-            <el-option
-              v-for="item in roleOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            >
-            </el-option>
-          </el-select>
-        </el-col>
-        <el-col :span="8" v-else>
+        <el-col :span="8">
           <el-input
             placeholder="请输入内容"
             v-model="queryInfo.query"
@@ -67,6 +45,7 @@
       <el-table :data="userList" border stripe>
         <el-table-column type="index"></el-table-column>
         <el-table-column label="商品名称" prop="goodsName"></el-table-column>
+        <el-table-column label="分类名称" prop="classifyName"></el-table-column>
         <el-table-column label="商品描述" prop="goodsDescribe"></el-table-column>
         <el-table-column label="商品现价" prop="goodsNewPrice"></el-table-column>
         <el-table-column label="商品原价" prop="goodsOldPrice"></el-table-column>
@@ -104,14 +83,14 @@
               type="primary"
               icon="el-icon-edit"
               size="mini"
-              @click="showEditDialog(scope.row.userId)"
+              @click="showEditDialog(scope.row)"
             ></el-button>
             <!-- 删除按钮 -->
             <el-button
               type="danger"
               icon="el-icon-delete"
               size="mini"
-              @click="removeUserById(scope.row.userId)"
+              @click="removeUserById(scope.row.goodsId )"
             ></el-button>
           </template>
         </el-table-column>
@@ -127,74 +106,6 @@
       >
       </el-pagination>
     </el-card>
-
-    <!-- 修改用户的对话框 -->
-    <el-dialog
-      title="修改用户"
-      :visible.sync="editDialogVisible"
-      width="50%"
-      @close="editDialogClosed"
-    >
-      <!-- 内容主体区域 -->
-      <el-form
-        :model="editForm"
-        :rules="editFormRules"
-        ref="editFormRef"
-        label-width="70px"
-      >
-        <el-upload
-          class="avatar-uploader"
-          :action="uploadURL"
-          :show-file-list="false"
-          :on-success="handleAvatarSuccess"
-        >
-          <img
-            v-show="isShow"
-            :src="editForm.imgPath"
-            class="avatars"
-            @click="changeIsShow"
-          />
-          <img v-if="imageUrl" :src="imageUrl" class="avatar" />
-          <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-        </el-upload>
-        <el-form-item label="id" prop="userId">
-          <el-input v-model="editForm.userId"></el-input>
-        </el-form-item>
-        <el-form-item label="用户名" prop="usernameCn">
-          <el-input v-model="editForm.usernameCn"></el-input>
-        </el-form-item>
-        <el-form-item label="手机" prop="phone">
-          <el-input v-model="editForm.phone"></el-input>
-        </el-form-item>
-        <el-form-item label="性别" prop="sex">
-          <el-select v-model="editForm.sex" placeholder="请选择">
-            <el-option
-              v-for="item in sexList"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            >
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="角色" prop="roleType">
-          <el-select v-model="editForm.roleType" placeholder="请选择">
-            <el-option
-              v-for="item in roleOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            >
-            </el-option>
-          </el-select>
-        </el-form-item>
-      </el-form>
-      <!-- 底部区域 -->
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="editDialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="editUserInfo">确 定</el-button>
-      </span>
-    </el-dialog>
   </div>
 </template>
 
@@ -239,11 +150,8 @@ export default {
         { label: '男', value: '0' }
       ],
       selectList: [
-        { label: '账号', value: 'username' },
-        { label: '用户名', value: 'usernameCn' },
-        { label: 'id', value: 'userId' },
-        { label: '角色', value: 'roleType' },
-        { label: '性别', value: 'sex' }
+        { label: '商品名称', value: 'goodsName' },
+        { label: '分类名称', value: 'classifyName' }
       ],
       select: '',
       addFormRules: {
@@ -299,15 +207,15 @@ export default {
       let param = {}
       param[this.select] = this.queryInfo.query
       const { data: res } = await this.$http.post(
-        `/api/v1/user/search?currPage=${this.queryInfo.currPage}&pageSize=${this.queryInfo.pageSize}`,
+        `/api/v1/goods/search?currPage=${this.queryInfo.currPage}&pageSize=${this.queryInfo.pageSize}`,
         param
       )
       if (res.code == 200) {
         this.userList = res.data.data
       this.total = res.data.total
-        return this.$message.success('获取用户列表成功!')
+        return this.$message.success('查询商品成功!')
       } else {
-        this.$message.error('获取用户列表失败!')
+        this.$message.error('查询商品失败!')
       }
       
     },
@@ -357,52 +265,13 @@ export default {
     add () {
         this.$router.push('/addgoods')
     },
-    async showEditDialog (userId) {
-      // console.log(userCode);
-      const { data: res } = await this.$http.post('/api/v1/user/search', {
-        userId: userId
-      })
-
-      if (res.code !== 200) {
-        return this.$message.error('查询用户信息失败!')
-      }
-      this.editForm = res.data.data[0]
-      // console.log(this.editForm);
-      this.userPicture = this.editForm.imgPath
-      this.editDialogVisible = true
+    showEditDialog (row) {
+     this.$router.push({ path: '/editgoods', query: row })
     },
-    editDialogClosed () {
-      this.$refs.editFormRef.resetFields()
-      this.isShow = true
-      this.imageUrl = ''
-    },
-    editUserInfo () {
-      this.$refs.editFormRef.validate(async valid => {
-        if (!valid) return
-        // 可以发起修改用户的网络请求
-        const { data: res } = await this.$http.post('/api/v1/user/updateUser', {
-          imgPath: this.userPicture,
-          userId: this.editForm.userId,
-          usernameCn: this.editForm.usernameCn,
-          phone: this.editForm.phone,
-          sex: this.editForm.sex,
-          roleType: this.editForm.roleType
-        })
-
-        if (res.code !== 200) {
-          this.$message.error('更新用户信息失败!')
-        }
-        // 关闭对话框
-        this.editDialogVisible = false
-        // 刷新数据列表
-        this.getUserList()
-        this.$message.success('修改用户信息成功')
-      })
-    },
-    async removeUserById (userId) {
+    async removeUserById (goodsId ) {
       // 弹框询问用户是否删除数据
       const confirmResult = await this.$confirm(
-        '此操作将永久删除该用户, 是否继续?',
+        '此操作将永久删除该商品, 是否继续?',
         '提示',
         {
           confirmButtonText: '确定',
@@ -416,13 +285,11 @@ export default {
       if (confirmResult !== 'confirm') {
         return this.$message.info('已取消删除')
       }
-      const { data: res } = await this.$http.post('/api/v1/user/deleteUser', [
-        userId
-      ])
+      const { data: res } = await this.$http.delete('/api/v1/goods/delete', {data: [goodsId]})
       if (res.code !== 200) {
-        return this.$message.error('删除用户失败!')
+        return this.$message.error('删除商品失败!')
       }
-      this.$message.success('删除用户成功')
+      this.$message.success('删除商品成功')
       this.getUserList()
     },
     handleAvatarSuccess (res, file) {

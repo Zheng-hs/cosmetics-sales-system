@@ -256,7 +256,7 @@
           </el-table-column> -->
         </el-table>
         <el-button type="primary" class="btnAdd" @click="add"
-          >添加公告</el-button
+          >添加商品</el-button
         >
       </el-form>
     </el-card>
@@ -295,6 +295,8 @@ export default {
       dialogVisible: false,
       disabled: false,
       imgPath: "",
+      userPicture1: '',
+      userPicture: '',
       normList: [],
       list: [],
       normsName: "",
@@ -530,8 +532,8 @@ export default {
       this.userPicture = res.path;
     },
     handleSuccess(res, file) {
-      this.userPicture = res.path;
-      this.subImageList.push(this.userPicture);
+      this.userPicture1 = res.path;
+      this.subImageList.push(this.userPicture1);
       console.log(this.subImageList);
     },
     handleRemove(res) {

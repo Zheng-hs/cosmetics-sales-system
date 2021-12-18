@@ -4,12 +4,12 @@ import Login from '../components/Login.vue'
 import Home from '../components/Home.vue'
 import Welcome from '../components/Welcome.vue'
 import Users from '../components/users/Users.vue'
-import UserInfo from '../components/users/UserInfo.vue'
 import Menu from '../components/menu/Menu.vue'
 import Image from '../components/imagemanage/Image.vue'
 import productClassify from '../components/goods/productClassify.vue'
 import Params from '../components/goods/Params.vue'
 import Addgoods from '../components/goods/Addgoods.vue'
+import Editgoods from '../components/goods/Editgoods.vue'
 import Goods from '../components/goods/Goods.vue'
 import Order from '../components/order/Order.vue'
 import ArticlesClassify from '../components/articles/ArticlesClassify.vue'
@@ -87,6 +87,10 @@ const routes = [{
       {
         path: '/goods',
         component: Goods
+      },
+      {
+        path: '/editgoods',
+        component: Editgoods
       },
     ]
   }
