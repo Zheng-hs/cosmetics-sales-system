@@ -20,7 +20,17 @@
             </el-option>
           </el-select>
         </el-col>
-        <el-col :span="8">
+        <el-col :span="4" v-if="select === 'articlesType'">
+           <el-select clearable  @clear="getImgList" v-model="queryInfo.query" placeholder="请选择查询类别" @change="getImgList1">
+            <el-option v-for="item in selectList1"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            >
+            </el-option>
+          </el-select>
+        </el-col>
+        <el-col :span="8" v-else>
           <el-input
             placeholder="请输入内容"
             v-model="queryInfo.query"
@@ -70,6 +80,11 @@
         <el-table-column label="创建时间" prop="createTime">
           <template slot-scope="scope">
             {{ scope.row.createTime | dataFormat }}
+          </template>
+        </el-table-column>
+        <el-table-column label="类型" prop="articlesType">
+          <template slot-scope="scope">
+            {{ scope.row.articlesType === "0" ? "公告" : scope.row.articlesType === "1" ? "文章" : scope.row.articlesType === "2" ? "话题" : "商品"}}
           </template>
         </el-table-column>
         <el-table-column label="操作" width="180px">
@@ -148,9 +163,17 @@ export default {
        selectList: [
         { label: '标题', value: 'articlesTitle' },
         { label: '描述', value: 'articlesDescribe' },
-        { label: '公告id', value: 'articlesId' }
+        { label: '公告id', value: 'articlesId' },
+        { label: '分类', value: 'articlesType' },
       ],
-      select: ''
+      selectList1: [
+        { label: '公告', value: '0' },
+        { label: '文章', value: '1' },
+        { label: '话题', value: '2' },
+        { label: '商品', value: '3' }
+      ],
+      select: '',
+      select1: ''
     };
   },
   created() {
@@ -201,30 +224,6 @@ export default {
       this.$refs.addFormRef.resetFields();
       this.imageUrl = "";
     },
-    // 点击按钮，添加新用户
-    addUser() {
-      this.$refs.addFormRef.validate(async valid => {
-        if (!valid) return;
-        // 可以发起添加用户的网络请求
-        const { data: res } = await this.$http.post("/api/v1/homePageImg/add", {
-          imgPath: this.userPicture,
-          sort: this.addForm.sort,
-          routing: this.addForm.routing
-        });
-
-        if (res.code !== 200) {
-          this.$message.error("添加图片失败!");
-        } else {
-          this.$message.success("添加图片成功");
-        }
-
-        // 隐藏添加用户的对话框
-        this.addDialogVisible = false;
-        this.imageUrl = "";
-        // 重新获取用户列表数据
-        this.getImgList();
-      });
-    },
     async changStatus(id) {
       console.log(1111);
       const { data: res } = await this.$http.post("/api/v1/articles/update", {
@@ -255,7 +254,7 @@ export default {
     async removeUserById(articlesId ) {
       // 弹框询问用户是否删除数据
       const confirmResult = await this.$confirm(
-        "此操作将永久删除该用户, 是否继续?",
+        "此操作将永久删除该公告, 是否继续?",
         "提示",
         {
           confirmButtonText: "确定",
@@ -275,9 +274,9 @@ export default {
         data: [articlesId ]
       });
       if (res.code !== 200) {
-        this.$message.error("删除图片失败!");
+        this.$message.error("删除公告失败!");
       } else {
-        this.$message.success("删除图片成功");
+        this.$message.success("删除公告成功");
       }
 
       this.getImgList();

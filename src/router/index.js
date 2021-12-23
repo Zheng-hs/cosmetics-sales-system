@@ -17,6 +17,8 @@ import Invoice from '../components/articles/Invoice.vue'
 import Add from '../components/articles/Add.vue'
 import Edit from '../components/articles/Edit.vue'
 import ProductComment from '../components/articles/ProductComment.vue'
+import Coupons from '../components/active/Coupons.vue'
+import Record from '../components/active/Record.vue'
 
 Vue.use(VueRouter)
 
@@ -91,6 +93,14 @@ const routes = [{
       {
         path: '/editgoods',
         component: Editgoods
+      },
+      {
+        path: '/coupons',
+        component: Coupons
+      },
+      {
+        path: '/couponsUserReceive',
+        component: Record
       },
     ]
   }

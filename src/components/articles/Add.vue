@@ -31,6 +31,7 @@
               <el-select
                 v-model="addForm.articlesClassifyId"
                 placeholder="请选择"
+                @change="selectArticles"
               >
                 <el-option
                   v-for="item in articlesList"
@@ -110,6 +111,8 @@ export default {
   data() {
     return {
       activeIndex: "0",
+      articlesClassifyId: '',
+      articlesType: '',
       addForm: {},
       cateList: [],
       articlesList: [],
@@ -163,6 +166,16 @@ export default {
       );
       this.articlesList = res.data.data;
     },
+    async selectArticles(id) {
+      const { data: res } = await this.$http.post(
+        "/api/v1/articlesClassify/search",
+        {articlesClassifyId: id}
+      );
+      
+      this.articlesType = res.data.data[0].articlesClassifyType
+      this.articlesClassifyId = res.data.data[0].articlesClassifyId
+
+    },
     add() {
       this.$refs.addFormRef.validate(async valid => {
         if (!valid) {
@@ -172,7 +185,14 @@ export default {
         // 商品的名称，必须是唯一的
         const { data: res } = await this.$http.post(
           "/api/v1/articles/add",
-          this.addForm
+          {
+            articlesClassifyId: this.articlesClassifyId,
+            articlesType: this.articlesType,
+            articlesTitle: this.addForm.articlesTitle,
+            articlesAuthor: this.addForm.articlesAuthor,
+            articlesDescribe: this.addForm.articlesDescribe,
+            articlesContent: this.addForm.articlesContent
+          }
         );
         if (res.code !== 200) {
           return this.$message.error("添加公告失败!");

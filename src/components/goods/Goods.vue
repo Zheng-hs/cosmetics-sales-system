@@ -322,4 +322,7 @@ export default {
   display: block;
   position: absolute;
 }
+.el-result {
+    padding: 0;
+}
 </style>

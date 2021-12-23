@@ -734,7 +734,7 @@ export default {
         this.operationListSearch,
         { params: this.queryInfo }
       );
-      if (res.code != 200) {
+      if (res.code !== 200) {
         return this.$message.error("获取操作记录失败");
       }
       this.operationList = res.data.data;

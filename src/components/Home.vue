@@ -1,7 +1,7 @@
 <template>
   <el-container class="home-container">
     <!-- 侧边栏 -->
-    <el-aside :width="isCollapse ? '64px' : '200px'">
+    <el-aside :width="isCollapse ? '64px' : '220px'">
       <!-- 侧边栏菜单区域 -->
       <el-menu
         background-color="#333744"

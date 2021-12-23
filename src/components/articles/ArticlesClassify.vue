@@ -9,8 +9,18 @@
 
     <el-card>
       <!-- 添加分类区域 -->
-      <el-row>
-        <el-col>
+      <el-row :gutter="20">
+        <el-col :span="4">
+           <el-select clearable  @clear="getCateList" v-model="select" placeholder="请选择" @change="getCateList1">
+             <el-option v-for="item in selectList"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            >
+            </el-option>
+          </el-select>
+        </el-col>
+        <el-col :span="4">
           <el-button type="primary" @click="showAddCateDialog"
             >添加分类</el-button
           >
@@ -107,6 +117,16 @@
           <img v-if="imageUrl" :src="imageUrl" class="avatar" />
           <i v-else class="el-icon-plus avatar-uploader-icon"></i>
         </el-upload>
+        <el-form-item label="文章类型" prop="articlesClassifyType">
+          <el-select v-model="addCateForm.articlesClassifyType" placeholder="请选择查询类别">
+            <el-option v-for="item in selectList"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            >
+            </el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item label="分类名称" prop="articlesClassifyName">
           <el-input v-model="addCateForm.articlesClassifyName"></el-input>
         </el-form-item>
@@ -176,6 +196,7 @@ export default {
       },
       uploadURL: 'http://1.15.186.9:8006/api/v1/upload',
       imageUrl: '',
+      select: '',
       total: 0,
       addCateDialogVisible: false,
       addCateForm: {
@@ -198,7 +219,13 @@ export default {
         remarks: [
           { required: true, message: "请输入分类描述", trigger: "blur" }
         ]
-      }
+      },
+       selectList: [
+        { label: '公告', value: '0' },
+        { label: '文章', value: '1' },
+        { label: '话题', value: '2' },
+        { label: '商品', value: '3' }
+      ],
     };
   },
   created() {
@@ -217,6 +244,20 @@ export default {
       const { data: res } = await this.$http.post(
         `/api/v1/articlesClassify/search?pageNo=${this.queryInfo.pageNo}&pageSize=${this.queryInfo.pageSize}`,
         {}
+      );
+
+      if (res.code !== 200) {
+        return this.$message.error("获取公告分类失败!");
+      }
+
+      this.cateList = res.data.data;
+      console.log(this.cateList);
+      this.total = res.data.total;
+    },
+    async getCateList1() {
+      const { data: res } = await this.$http.post(
+        `/api/v1/articlesClassify/search?pageNo=${this.queryInfo.pageNo}&pageSize=${this.queryInfo.pageSize}`,
+        {articlesClassifyType: this.select}
       );
 
       if (res.code !== 200) {
@@ -251,6 +292,7 @@ export default {
           "/api/v1/articlesClassify/add",
           {
               articlesClassifyIcon: this.userPicture,
+              articlesClassifyType:this.addCateForm.articlesClassifyType,
               articlesClassifyName: this.addCateForm.articlesClassifyName,
               articlesClassifySort: this.addCateForm.articlesClassifySort
           }
