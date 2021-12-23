@@ -644,6 +644,7 @@ export default {
   width: 150px;
   height: 100px;
   margin-right: 5px;
+  margin-bottom: 5px;
   position: relative;
   img {
     width: 150px;
@@ -669,6 +670,7 @@ export default {
 .picture {
   /deep/.el-form-item__content {
     display: flex;
+    flex-wrap: wrap;
   }
 }
 /deep/ .el-upload--picture-card {
