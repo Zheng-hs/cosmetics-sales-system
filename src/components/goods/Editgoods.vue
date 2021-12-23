@@ -126,6 +126,13 @@
             </el-form-item>
           </el-col>
         </el-row>
+        <el-row :gutter="20">
+          <el-col :span="10">
+            <el-form-item label="限购量" prop="maxQuantity">
+              <el-input v-model="addForm.maxQuantity"></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
         <!-- <el-row :gutter="20">
           <el-col :span="6">
             <el-form-item label="选择配置">
