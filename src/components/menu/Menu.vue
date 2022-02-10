@@ -174,7 +174,7 @@ export default {
       innerVisible: false,
       dialogFormData: {
         component: 0,
-        menuParentId: "",
+        menuParentId: 0,
         isLeaf: "0"
       },
       pageInfo: {
@@ -236,7 +236,7 @@ export default {
     async search() {
       const { data: res } = await this.$http.post("/api/v1/menu/search",{});
       if (res.code !== 200) {
-        return this.$message.error("获取列表失败！");
+        return this.$message.error("获取列表失败!");
       }
       this.menuList = res.data;
     },
@@ -249,9 +249,9 @@ export default {
     async btnChange() {
         const {data: res} = await this.$http.put('/api/v1/menu/updateMenu',this.formData)
         if(res.code==200) {
-            this.$message.success('修改菜单成功！')
+            this.$message.success('修改菜单成功!')
         } else {
-            this.$message.error('修改菜单失败！')
+            this.$message.error('修改菜单失败!')
         }
     },
     dialogBeforeClose() {
@@ -271,12 +271,12 @@ export default {
             this.dialogFormData
           );
           if (res.code == 200) {
-            this.$message.success("新增菜单成功！");
+            this.$message.success("新增菜单成功!");
           } else {
             this.$message.error("新增菜单失败!");
           }
           this.innerVisible = false;
-          this.dialogFormData = {};
+          this.$refs.form.resetFields();
         } else {
           return false;
         }
@@ -287,9 +287,9 @@ export default {
       this.$confirm("此操作将永久删除该菜单,是否继续?").then(async () => {
         const {data: res} = await this.$http.delete(`/api/v1/menu/deleteMenu/${menuId}`)
         if(res.code == 200) {
-            this.$message.success('删除菜单成功！')
+            this.$message.success('删除菜单成功!')
         } else {
-            this.$message.error('删除菜单失败！')
+            this.$message.error('删除菜单失败!')
         }
       }).catch(err => err);
     },

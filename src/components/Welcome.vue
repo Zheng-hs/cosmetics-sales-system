@@ -579,7 +579,7 @@ export default {
         ],
       };
       const { data: res } = await this.$http.post(
-        `/api/v1/data-count/countGoodsBrowse?startDate=${this.value1[0]}&endDate=${this.value1[1]}`
+        `/api/v1/data-count/countOrderStatus?startDate=${this.value1[0]}&endDate=${this.value1[1]}`
       );
       if (res.data.length > 0) {
         res.data = res.data.map((item) => ({
