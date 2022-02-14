@@ -102,7 +102,7 @@
         ></el-table-column>
         <el-table-column label="是否使用" prop="couponId" width="100px">
           <template slot-scope="scope">
-            <el-tag type="success" v-if="scope.row.status === '0'">未使用</el-tag>
+            <el-tag type="success" v-if="scope.row.status === 'null'">未使用</el-tag>
             <el-tag v-else>已使用</el-tag>
           </template>
         </el-table-column>
@@ -265,11 +265,19 @@ export default {
     },
     handleSizeChange(newSize) {
       this.queryInfo.pageSize = newSize;
-      this.getOrderList();
+      if(this.queryInfo.query==='') {
+        this.getOrderList()
+      } else {
+        this.getOrderList1()
+      }
     },
     handleCurrentChange(newPage) {
       this.queryInfo.pageNo = newPage;
-      this.getOrderList();
+      if(this.queryInfo.query==='') {
+        this.getOrderList()
+      } else {
+        this.getOrderList1()
+      }
     },
     async showBox(id) {
       // const { data: res } = await this.$http.get(`orders/${id}`)

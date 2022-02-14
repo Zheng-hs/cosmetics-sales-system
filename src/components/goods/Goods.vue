@@ -186,7 +186,8 @@ export default {
           { validator: checkMobile, trigger: 'blur' }
         ]
       },
-      userInfo: ''
+      userInfo: '',
+      operationListSearch: {},
     }
   },
   created () {
@@ -208,7 +209,7 @@ export default {
       let param = {}
       param[this.select] = this.queryInfo.query
       const { data: res } = await this.$http.post(
-        `/api/v1/goods/search?currPage=${this.queryInfo.currPage}&pageSize=${this.queryInfo.pageSize}`,
+        `/api/v1/goods/search?pageNo=${this.queryInfo.currPage}&pageSize=${this.queryInfo.pageSize}`,
         param
       )
       if (res.code == 200) {
