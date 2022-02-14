@@ -10,7 +10,7 @@
     <el-card>
       <!-- 搜素与添加区域 -->
       <el-row :gutter="20">
-        <el-col :span="8">
+        <!-- <el-col :span="8">
           <el-input
             placeholder="请输入内容"
             v-model="queryInfo.query"
@@ -23,7 +23,7 @@
               @click="getImgList"
             ></el-button>
           </el-input>
-        </el-col>
+        </el-col> -->
         <el-col :span="4">
           <el-button type="primary" @click="addDialogVisible = true"
             >添加轮播图</el-button

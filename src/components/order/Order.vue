@@ -55,7 +55,7 @@
           prop="orderId"
           width="250px"
         ></el-table-column>
-        <el-table-column label="创建人" prop="createUser"></el-table-column>
+        <el-table-column label="下单人" prop="createUser"></el-table-column>
         <el-table-column
           label="商品名称"
           prop="goodsName"
@@ -85,11 +85,11 @@
           prop="goodsCnt"
           width="95px"
         ></el-table-column>
-        <el-table-column
-          label="下单人"
+        <!-- <el-table-column
+          label=""
           prop="updateUser"
           width="95px"
-        ></el-table-column>
+        ></el-table-column> -->
         <el-table-column
           label="电话"
           prop="userPhone"
@@ -100,6 +100,12 @@
           prop="userAddress"
           width="150px"
         ></el-table-column>
+        <el-table-column label="是否使用" prop="couponId" width="100px">
+          <template slot-scope="scope">
+            <el-tag type="success" v-if="scope.row.status === '0'">未使用</el-tag>
+            <el-tag v-else>已使用</el-tag>
+          </template>
+        </el-table-column>
         <el-table-column label="状态" prop="status" width="100px">
           <template slot-scope="scope">
             <el-tag v-if="scope.row.status === '1'">已下单</el-tag>

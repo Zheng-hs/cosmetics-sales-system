@@ -94,7 +94,7 @@
         <el-table-column label="评论者" prop="commentUser"> </el-table-column>
         <el-table-column label="评论内容" prop="commentContent">
         </el-table-column>
-        <el-table-column label="等级" prop="goodsLevel"> </el-table-column>
+        <el-table-column label="评分" prop="goodsLevel"> </el-table-column>
         <el-table-column label="头像" prop="imgPath">
           <template slot-scope="scope">
             <el-image

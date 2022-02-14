@@ -18,8 +18,16 @@
         <el-table-column prop="userId" label="操作人"> </el-table-column>
         <el-table-column prop="couponName" label="优惠券名称">
         </el-table-column>
-        <el-table-column prop="startTime" label="领取开始时间"> </el-table-column>
-        <el-table-column prop="endTime" label="领取结束时间"> </el-table-column>
+        <el-table-column label="是否使用" prop="status" width="100px">
+          <template slot-scope="scope">
+            <el-tag type="success" v-if="scope.row.status === '1'">已使用</el-tag>
+            <el-tag v-else-if="scope.row.status === '0'"
+              >未使用</el-tag
+            >
+          </template>
+        </el-table-column>
+        <el-table-column prop="startTime" label="使用开始时间"> </el-table-column>
+        <el-table-column prop="endTime" label="使用结束时间"> </el-table-column>
         <el-table-column prop="couponType" label="优惠券类型">
         </el-table-column>
       </el-table>

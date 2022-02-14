@@ -38,7 +38,7 @@
         <el-table-column prop="articlesClassifyId" label="分类id"></el-table-column>
         <el-table-column prop="articlesClassifyName" label="分类名称">
         </el-table-column>
-        <el-table-column label="是否有效">
+        <!-- <el-table-column label="是否有效">
           <template slot-scope="scope">
             <i
               class="el-icon-success"
@@ -47,9 +47,9 @@
             ></i>
             <i class="el-icon-error" v-else style="color: red;"></i>
           </template>
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column prop="articlesClassifySort" label="分类排序"> </el-table-column>
-        <el-table-column prop="articlesClassifyIcon" label="图标">
+        <!-- <el-table-column prop="articlesClassifyIcon" label="图标">
             <template slot-scope="scope">
             <el-image
               style="width: 60px; height: 60px"
@@ -61,7 +61,7 @@
               </div>
             </el-image>
           </template>
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column prop="createTime" label="创建时间"> </el-table-column>
         <el-table-column label="操作" width="200px">
           <!-- 操作 -->

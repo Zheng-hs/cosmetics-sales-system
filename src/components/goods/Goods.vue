@@ -50,6 +50,7 @@
         <el-table-column label="商品现价" prop="goodsNewPrice"></el-table-column>
         <el-table-column label="商品原价" prop="goodsOldPrice"></el-table-column>
         <el-table-column label="限购量" prop="maxQuantity"></el-table-column>
+        <el-table-column label="商品库存" prop="goodsStock"></el-table-column>
         <el-table-column label="商品图片" prop="mainImage">
           <template slot-scope="scope">
             <el-image

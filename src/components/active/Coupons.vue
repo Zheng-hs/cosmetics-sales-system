@@ -20,7 +20,7 @@
             <el-button
               slot="append"
               icon="el-icon-search"
-              @click="getImgList"
+              @click="getImgList1"
             ></el-button>
           </el-input>
         </el-col>
@@ -53,7 +53,7 @@
             {{ scope.row.collectionEndTime | dataFormat }}
           </template>
         </el-table-column>
-        <el-table-column label="创建人" prop="createUser"></el-table-column>
+        <!-- <el-table-column label="创建人" prop="createUser"></el-table-column> -->
         <el-table-column label="可使用天数" prop="useTime"></el-table-column>
         <el-table-column label="状态">
           <template slot-scope="scope">
@@ -151,7 +151,7 @@
           >
           </el-date-picker>
         </el-form-item>
-        <el-form-item label="可用商品" prop="goodsIdList">
+        <el-form-item label="可用商品" prop="goodsIdList" v-if="addForm.couponType==='商家券'">
           <el-select v-model="goodsIdList" multiple placeholder="请选择">
             <el-option
               v-for="item in goodsList"
@@ -297,7 +297,18 @@ export default {
         {}
       );
       if (res.code !== 200) {
-        return this.$message.error("获取轮播图列表失败!");
+        return this.$message.error("获取优惠券列表失败!");
+      }
+      this.imgList = res.data.data;
+      this.total = res.data.total;
+    },
+    async getImgList1() {
+      const { data: res } = await this.$http.post(
+        `/api/v1/coupon/search?pageNo=${this.queryInfo.pageNo}&pageSize=${this.queryInfo.pageSize}`,
+        {couponName: this.queryInfo.query}
+      );
+      if (res.code !== 200) {
+        return this.$message.error("获取优惠券列表失败!");
       }
       this.imgList = res.data.data;
       this.total = res.data.total;
