@@ -416,15 +416,15 @@ export default {
         })
 
         if (res.code !== 200) {
-          this.$message.error('添加用户失败!')
-        }
-
-        this.$message.success('添加用户成功')
+          this.$message.error(res.message)
+        } else {
+          this.$message.success('添加用户成功')
         // 隐藏添加用户的对话框
         this.addDialogVisible = false
         this.imageUrl = ''
         // 重新获取用户列表数据
         this.getUserList()
+        }
       })
     },
     async showEditDialog (userId) {
