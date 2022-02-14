@@ -251,11 +251,20 @@ export default {
     },
     handleSizeChange (newSize) {
       this.queryInfo.pageSize = newSize
-      this.getUserList()
+      if(this.queryInfo.query==='') {
+        this.getUserList()
+      } else {
+        this.getUserList1()
+      }
+      
     },
     handleCurrentChange (newPage) {
       this.queryInfo.currPage = newPage
-      this.getUserList()
+      if(this.queryInfo.query==='') {
+        this.getUserList()
+      } else {
+        this.getUserList1()
+      }
     },
     // 监听添加用户对话框的关闭事件
     addDialogClosed () {
