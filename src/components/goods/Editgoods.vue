@@ -497,7 +497,18 @@ export default {
         }
         //  发起请求添加商品
         // 商品的名称，必须是唯一的
-        const { data: res } = await this.$http.post("/api/v1/goods/update", this.addForm);
+        const { data: res } = await this.$http.post("/api/v1/goods/update", {
+          classifyId: this.addForm.classifyId,
+           classifyParentId: this.addForm.classifyParentId,
+           goodsDescribe:this.addForm.goodsDescribe,
+           goodsName: this.addForm.goodsName,
+           goodsNewPrice: this.addForm.goodsNewPrice,
+           goodsOldPrice: this.addForm.goodsOldPrice,
+           mainImage: this.userPicture1,
+           subImageList: this.subImageList,
+           goodsNormsEntityList: this.addForm.goodsNormsEntityList,
+           goodsId: this.addForm.goodsId
+        });
         if (res.code !== 200) {
           return this.$message.error("修改商品失败!");
         }
@@ -519,7 +530,7 @@ export default {
       this.imageUrl = URL.createObjectURL(file.raw);
       // console.log(this.imageUrl)
       // console.log(res)
-      this.userPicture = res.path;
+      this.userPicture1 = res.path;
     },
     handleSuccess(res, file) {
       this.userPicture = res.path;

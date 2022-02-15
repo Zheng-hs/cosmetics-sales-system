@@ -611,6 +611,7 @@ export default {
     },
     getTable() {
       this.tableShow = !this.tableShow
+      console.log(this.allList);
     },
   },
 };

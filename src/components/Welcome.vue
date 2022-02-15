@@ -334,7 +334,11 @@ export default {
       new Date().getDate() < 10
         ? "0" + new Date().getDate()
         : new Date().getDate();
-    this.gettime = yy + "-" + mm + "-" + dd;
+    let dd1 =
+      (new Date().getDate()+1) < 10
+        ? "0" + (new Date().getDate()+1)
+        : (new Date().getDate()+1);
+    this.gettime = yy + "-" + mm + "-" + dd1;
     this.gettime1 = yy + "-" + mm1 + "-" + dd;
     this.getPie1();
     this.getPie2();

@@ -25,6 +25,21 @@
         ref="addFormRef"
         label-width="100px"
       >
+      <el-row :gutter="20">
+          <el-col :span="4">
+            <el-form-item label="封面图片">
+              <el-upload
+                class="avatar-uploader"
+                :action="serverUrl"
+                :show-file-list="false"
+                :on-success="handleAvatarSuccess"
+              >
+                <img v-if="imageUrl" :src="imageUrl" class="avatar" />
+                <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+              </el-upload>
+            </el-form-item>
+          </el-col>
+        </el-row>
         <el-row :gutter="20">
           <el-col :span="10">
             <el-form-item label="公告分类" prop="articlesClassifyId">
@@ -131,6 +146,7 @@ export default {
       serverUrl: "http://1.15.186.9:8006/api/v1/upload", // 这里写你要上传的图片服务器地址
       header: { Authorization: token }, // 有的图片服务器要求请求头需要有token之类的参数，写在这里
       detailContent: "", // 富文本内容
+      imageUrl:'',
       editorOption: {
         placeholder: "",
         theme: "snow", // or 'bubble'
@@ -173,7 +189,16 @@ export default {
         // 商品的名称，必须是唯一的
         const { data: res } = await this.$http.post(
           "/api/v1/articles/update",
-          this.addForm
+          {
+            articlesImg: this.userPicture1,
+            articlesId: this.addForm.articlesId,
+            articlesClassifyId: this.addForm.articlesClassifyId,
+            articlesType: this.articlesType,
+            articlesTitle: this.addForm.articlesTitle,
+            articlesAuthor: this.addForm.articlesAuthor,
+            articlesDescribe: this.addForm.articlesDescribe,
+            articlesContent: this.addForm.articlesContent,
+          }
         );
         if (res.code !== 200) {
           return this.$message.error("修改公告失败!");
@@ -184,6 +209,15 @@ export default {
     },
     getList() {
         this.addForm = this.$route.query
+        // this.addForm.articlesClassifyId = ''+this.addForm.articlesClassifyId
+        console.log(this.addForm);
+        this.imageUrl = this.addForm.articlesImg;
+    },
+    handleAvatarSuccess(res, file) {
+      this.imageUrl = URL.createObjectURL(file.raw);
+      // console.log(this.imageUrl)
+      // console.log(res)
+      this.userPicture1 = res.path;
     },
     // 富文本图片上传前
     beforeUpload() {
@@ -230,5 +264,24 @@ export default {
 }
 .btnAdd {
   margin-top: 15px;
+}
+.avatar-uploader-icon {
+  font-size: 28px;
+  color: #8c939d;
+  width: 150px;
+  height: 100px;
+  line-height: 100px;
+  text-align: center;
+}
+.avatar {
+  width: 150px;
+  height: 100px;
+  display: block;
+}
+.avatars {
+  width: 150px;
+  height: 100px;
+  display: block;
+  position: absolute;
 }
 </style>

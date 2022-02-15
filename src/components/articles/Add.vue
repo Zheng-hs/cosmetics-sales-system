@@ -24,7 +24,22 @@
         :rules="addFormRules"
         ref="addFormRef"
         label-width="100px"
-      >
+      > 
+        <el-row :gutter="20">
+          <el-col :span="4">
+            <el-form-item label="封面图片">
+              <el-upload
+                class="avatar-uploader"
+                :action="serverUrl"
+                :show-file-list="false"
+                :on-success="handleAvatarSuccess"
+              >
+                <img v-if="imageUrl" :src="imageUrl" class="avatar" />
+                <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+              </el-upload>
+            </el-form-item>
+          </el-col>
+        </el-row>
         <el-row :gutter="20">
           <el-col :span="10">
             <el-form-item label="公告分类" prop="articlesClassifyId">
@@ -133,6 +148,8 @@ export default {
       quillUpdateImg: false, // 根据图片上传状态来确定是否显示loading动画，刚开始是false,不显示
       serverUrl: "http://1.15.186.9:8006/api/v1/upload", // 这里写你要上传的图片服务器地址
       header: { Authorization: token }, // 有的图片服务器要求请求头需要有token之类的参数，写在这里
+      imageUrl: "",
+      userPicture:'',
       detailContent: "", // 富文本内容
       editorOption: {
         placeholder: "",
@@ -191,7 +208,8 @@ export default {
             articlesTitle: this.addForm.articlesTitle,
             articlesAuthor: this.addForm.articlesAuthor,
             articlesDescribe: this.addForm.articlesDescribe,
-            articlesContent: this.addForm.articlesContent
+            articlesContent: this.addForm.articlesContent,
+            articlesImg: this.userPicture
           }
         );
         if (res.code !== 200) {
@@ -206,7 +224,12 @@ export default {
       // 显示loading动画
       this.quillUpdateImg = true;
     },
-
+    handleAvatarSuccess(res, file) {
+      this.imageUrl = URL.createObjectURL(file.raw);
+      // console.log(this.imageUrl)
+      // console.log(res)
+      this.userPicture = res.path;
+    },
     uploadSuccess(res, file) {
       // res为图片服务器返回的数据
       // 获取富文本组件实例
@@ -246,5 +269,24 @@ export default {
 }
 .btnAdd {
   margin-top: 15px;
+}
+.avatar-uploader-icon {
+  font-size: 28px;
+  color: #8c939d;
+  width: 150px;
+  height: 100px;
+  line-height: 100px;
+  text-align: center;
+}
+.avatar {
+  width: 150px;
+  height: 100px;
+  display: block;
+}
+.avatars {
+  width: 150px;
+  height: 100px;
+  display: block;
+  position: absolute;
 }
 </style>

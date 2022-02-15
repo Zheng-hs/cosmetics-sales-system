@@ -63,7 +63,7 @@
         <!-- <el-table-column label="分类id" prop="articlesClassifyId"></el-table-column> -->
         <el-table-column label="标题" prop="articlesTitle"> </el-table-column>
         <el-table-column label="作者" prop="articlesAuthor"></el-table-column>
-        <el-table-column label="公告id" prop="articlesId"> </el-table-column>
+        <el-table-column label="公告id" prop="articlesId" type="number"> </el-table-column>
         <el-table-column label="公告描述" prop="articlesDescribe">
         </el-table-column>
         <el-table-column label="浏览量" prop="articlesPageView">
@@ -270,7 +270,7 @@ export default {
       this.getImgList();
     },
     showEditDialog(data) {
-      // console.log(userCode);
+      // console.log(data);
       this.$router.push({ path: "/edit", query: data });
     },
     async removeUserById(articlesId) {
