@@ -507,7 +507,8 @@ export default {
            mainImage: this.userPicture1,
            subImageList: this.subImageList,
            goodsNormsEntityList: this.addForm.goodsNormsEntityList,
-           goodsId: this.addForm.goodsId
+           goodsId: this.addForm.goodsId,
+           maxQuantity: this.addForm.maxQuantity
         });
         if (res.code !== 200) {
           return this.$message.error("修改商品失败!");
