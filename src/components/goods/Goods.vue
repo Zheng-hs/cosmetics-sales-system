@@ -292,8 +292,15 @@ export default {
     editDialogClosed() {
       // this.$refs.editFormRef.resetFields();
     },
-    editUserInfo() {
+    async editUserInfo() {
       console.log(this.allList);
+      const {data:res} = await this.$http.post('/api/v1/goodsNorms/updateByList',this.allList)
+      if(res.code==200) {
+        this.$message.success('修改成功！')
+        this.editDialogVisible = false;
+        this.getUserList()
+      }
+
     },
     async changStatus(id) {
       const { data: res } = await this.$http.post("/api/v1/goods/update", {
