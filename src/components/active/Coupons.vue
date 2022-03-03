@@ -43,12 +43,12 @@
           label="已领取数量"
           prop="collectionAmount"
         ></el-table-column>
-        <el-table-column label="领取开始时间" prop="collectionStartTime" width="150px">
+        <el-table-column label="开始时间" prop="collectionStartTime" width="150px">
           <template slot-scope="scope">
             {{ scope.row.collectionStartTime | dataFormat }}
           </template>
         </el-table-column>
-        <el-table-column label="领取结束时间" prop="collectionEndTime" width="150px">
+        <el-table-column label="结束时间" prop="collectionEndTime" width="150px">
           <template slot-scope="scope">
             {{ scope.row.collectionEndTime | dataFormat }}
           </template>

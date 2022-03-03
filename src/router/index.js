@@ -19,7 +19,8 @@ import Edit from '../components/articles/Edit.vue'
 import ProductComment from '../components/articles/ProductComment.vue'
 import Coupons from '../components/active/Coupons.vue'
 import Record from '../components/active/Record.vue'
-
+import GoodsActivity from '../components/activity/GoodsActivity.vue'
+import ActivityTryUser from '../components/activity/ActivityTryUser.vue'
 Vue.use(VueRouter)
 
 const routes = [{
@@ -102,6 +103,14 @@ const routes = [{
         path: '/couponsUserReceive',
         component: Record
       },
+      {
+        path: '/goodsActivity',
+        component: GoodsActivity
+      },
+      {
+        path: '/activityTryUser',
+        component: ActivityTryUser
+      }
     ]
   }
 ]
