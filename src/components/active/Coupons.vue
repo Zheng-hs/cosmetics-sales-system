@@ -117,9 +117,7 @@
         <el-form-item label="领取数量限制" prop="collectionLimit">
           <el-input v-model="addForm.collectionLimit"></el-input>
         </el-form-item>
-        <el-form-item label="已领取数量" prop="collectionAmount">
-          <el-input v-model="addForm.collectionAmount"></el-input>
-        </el-form-item>
+        
         <el-form-item label="最低消费金额" prop="useLimitValue">
           <el-input v-model="addForm.useLimitValue"></el-input>
         </el-form-item>
