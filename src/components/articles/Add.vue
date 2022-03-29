@@ -29,7 +29,7 @@
           <el-col :span="4">
             <el-form-item label="封面图片">
               <el-upload
-                class="avatar-uploader"
+                class="avatar-uploader1"
                 :action="serverUrl"
                 :show-file-list="false"
                 :on-success="handleAvatarSuccess"
@@ -246,6 +246,7 @@ export default {
       } else {
         this.$message.error("图片插入失败");
       }
+      console.log(quill);
       // loading动画消失
       this.quillUpdateImg = false;
     },

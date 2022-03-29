@@ -9,50 +9,65 @@
 
     <el-card>
       <!-- 搜素与添加区域 -->
-       <el-row :gutter="20">
-            <el-col :span="4">
-              <el-select v-model="selectObj" placeholder="请选择评论对象" @change="choose">
-                <el-option
-                  v-for="item in list"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                >
-                </el-option>
-              </el-select>
-            </el-col>
-            <el-col :span="8">
-              <el-select
-                v-model="addForm.uid"
-                placeholder="请选择"
-                v-if="selectObj === 'articlesId'"
-                @change="getImgList1"
-              >
-                <el-option
-                  v-for="item in articleList"
-                  :key="item.articlesId"
-                  :label="item.articlesTitle"
-                  :value="item.articlesId"
-                >
-                </el-option>
-              </el-select>
-              <el-select v-model="addForm.uid" placeholder="请选择" @change="getImgList1" v-else>
-                <el-option
-                  v-for="item in goodsList"
-                  :key="item.goodsId"
-                  :label="item.goodsName"
-                  :value="item.goodsId"
-                >
-                </el-option>
-              </el-select>
-            </el-col>
-          <el-button type="primary" @click="addDialogVisible = true"
-            >新增评价</el-button
+      <el-row :gutter="20">
+        <el-col :span="4">
+          <el-select
+            v-model="selectObj"
+            placeholder="请选择评论对象"
+            @change="choose"
           >
-          </el-row>
+            <el-option
+              v-for="item in list"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            >
+            </el-option>
+          </el-select>
+        </el-col>
+        <el-col :span="8">
+          <el-select
+            v-model="addForm.uid"
+            placeholder="请选择"
+            v-if="selectObj === 'articlesId'"
+            @change="getImgList1"
+          >
+            <el-option
+              v-for="item in articleList"
+              :key="item.articlesId"
+              :label="item.articlesTitle"
+              :value="item.articlesId"
+            >
+            </el-option>
+          </el-select>
+          <el-select
+            v-model="addForm.uid"
+            placeholder="请选择"
+            @change="getImgList1"
+            v-else
+          >
+            <el-option
+              v-for="item in goodsList"
+              :key="item.goodsId"
+              :label="item.goodsName"
+              :value="item.goodsId"
+            >
+            </el-option>
+          </el-select>
+        </el-col>
+        <el-button type="primary" @click="addDialogVisible = true"
+          >新增评价</el-button
+        >
+      </el-row>
 
       <!-- 用户列表区域 -->
-      <el-table :data="imgList" border stripe :row-key="getRowKeys" ref="topicTable">
+      <el-table
+        :data="imgList"
+        border
+        stripe
+        :row-key="getRowKeys"
+        ref="topicTable"
+      >
         <el-table-column type="expand">
           <template slot-scope="props">
             <el-form label-position="left" inline class="demo-table-expand">
@@ -160,7 +175,11 @@
         <el-form-item label="商品/文章" prop="uid">
           <el-row :gutter="20">
             <el-col :span="10">
-              <el-select v-model="selectObj" placeholder="请选择评论对象" @change="choose">
+              <el-select
+                v-model="selectObj"
+                placeholder="请选择评论对象"
+                @change="choose"
+              >
                 <el-option
                   v-for="item in list"
                   :key="item.value"
@@ -222,7 +241,7 @@ export default {
         // 当前的页数
         pageNo: 1,
         // 当前每页显示多少条数据
-        pageSize: 5
+        pageSize: 5,
       },
       imgList: [],
       total: 0,
@@ -233,11 +252,11 @@ export default {
       selectList: [
         { label: "标题", value: "articlesTitle" },
         { label: "描述", value: "articlesDescribe" },
-        { label: "公告id", value: "articlesId" }
+        { label: "公告id", value: "articlesId" },
       ],
       list: [
         { label: "文章", value: "articlesId" },
-        { label: "商品", value: "goodsId" }
+        { label: "商品", value: "goodsId" },
       ],
       select: "",
       selectObj: "",
@@ -249,14 +268,14 @@ export default {
       addFormRules: {
         username: [{ required: true, message: "请输入账号", trigger: "blur" }],
         usernameCn: [
-          { required: true, message: "请输入用户名", trigger: "blur" }
-        ]
+          { required: true, message: "请输入用户名", trigger: "blur" },
+        ],
       },
       goodsList: [],
       articleList: [],
       newList: [],
-    colors: ['#99A9BF', '#F7BA2A', '#FF9900'],
-    goodsLevel: 0
+      colors: ["#99A9BF", "#F7BA2A", "#FF9900"],
+      goodsLevel: 0,
     };
   },
   created() {
@@ -280,10 +299,10 @@ export default {
     },
     choose() {
       if (this.selectObj === "goodsId") {
-        this.showRate = !this.showRate
+        this.showRate = !this.showRate;
       }
       if (this.selectObj === "articlesId") {
-        this.showRate = false
+        this.showRate = false;
       }
     },
     async getImgList() {
@@ -301,7 +320,7 @@ export default {
     async getImgList1(uid) {
       const { data: res } = await this.$http.post(
         `/api/v1/comment/search?pageNo=${this.queryInfo.pageNo}&pageSize=${this.queryInfo.pageSize}`,
-        {uid:uid}
+        { uid: uid }
       );
       if (res.code !== 200) {
         return this.$message.error("获取评论失败!");
@@ -311,31 +330,35 @@ export default {
       this.total = res.data.total;
     },
     async add() {
-    if (this.selectObj === "goodsId") {
-         const {data: res} = await this.$http.post('/api/v1/comment/add',{
-             goodsLevel: this.goodsLevel,
-             commentContent: this.addForm.commentContent,
-             uid: this.addForm.uid
-         })
-      if(res.code == 200) {
-          this.$message.success('新增评价成功！')
-          this.addDialogVisible = false
-          this.getImgList()
-      } else {
-          this.$message.error('新增评价失败！')
+      if (this.selectObj === "goodsId") {
+        const { data: res } = await this.$http.post("/api/v1/comment/add", {
+          goodsLevel: this.goodsLevel,
+          commentContent: this.addForm.commentContent,
+          uid: this.addForm.uid,
+          commentType: 3,
+        });
+        if (res.code == 200) {
+          this.$message.success("新增评价成功！");
+          this.addDialogVisible = false;
+          this.getImgList();
+        } else {
+          this.$message.error("新增评价失败！");
+        }
       }
+      if (this.selectObj === "articlesId") {
+        const { data: res } = await this.$http.post("/api/v1/comment/add", {
+          commentType: 1,
+          commentContent: this.addForm.commentContent,
+          uid: this.addForm.uid,
+        });
+        if (res.code == 200) {
+          this.$message.success("新增评价成功！");
+          this.addDialogVisible = false;
+          this.getImgList();
+        } else {
+          this.$message.error("新增评价失败！");
+        }
       }
-    if (this.selectObj === "articlesId") {
-         const {data: res} = await this.$http.post('/api/v1/comment/add',this.addForm)
-      if(res.code == 200) {
-          this.$message.success('新增评价成功！')
-          this.addDialogVisible = false
-          this.getImgList()
-      } else {
-          this.$message.error('新增评价失败！')
-      }
-      }
-     
     },
     changeIsShow() {
       this.isShow = !this.isShow;
@@ -356,7 +379,7 @@ export default {
       console.log(1111);
       const { data: res } = await this.$http.post("/api/v1/articles/update", {
         articlesId: id,
-        isDelete: 1
+        isDelete: 1,
       });
       if (res.code !== 200) {
         return this.$message.error("禁用失败!");
@@ -367,7 +390,7 @@ export default {
     async changIsDelete(id) {
       const { data: res } = await this.$http.post("/api/v1/articles/update", {
         articlesId: id,
-        isDelete: 0
+        isDelete: 0,
       });
       if (res.code !== 200) {
         return this.$message.error("启用失败!");
@@ -376,13 +399,13 @@ export default {
       this.getImgList();
     },
     showExpand(row) {
-        this.isShow = true
-        this.commentId = row.commentId;
+      this.isShow = true;
+      this.commentId = row.commentId;
       this.commentUser = row.commentUser;
-      this.$refs.topicTable.toggleRowExpansion(row, true) 
+      this.$refs.topicTable.toggleRowExpansion(row, true);
     },
-     getRowKeys(row) {
-       return row.commentId
+    getRowKeys(row) {
+      return row.commentId;
     },
     async removeUserById(id) {
       // 弹框询问用户是否删除数据
@@ -392,9 +415,9 @@ export default {
         {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
-          type: "warning"
+          type: "warning",
         }
-      ).catch(err => err);
+      ).catch((err) => err);
 
       // 如果用户确认删除，则返回字符串confirm
       // 如果用户取消删除，则返回字符串cancel
@@ -402,7 +425,7 @@ export default {
         return this.$message.info("已取消删除");
       }
       const { data: res } = await this.$http.delete("/api/v1/comment/delete", {
-        data: [id]
+        data: [id],
       });
       if (res.code == 200) {
         this.$message.success("删除图片成功");
@@ -419,9 +442,9 @@ export default {
         {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
-          type: "warning"
+          type: "warning",
         }
-      ).catch(err => err);
+      ).catch((err) => err);
 
       // 如果用户确认删除，则返回字符串confirm
       // 如果用户取消删除，则返回字符串cancel
@@ -429,7 +452,7 @@ export default {
         return this.$message.info("已取消删除");
       }
       const { data: res } = await this.$http.delete("/api/v1/reply/delete", {
-        data: [id]
+        data: [id],
       });
       if (res.code == 200) {
         this.$message.success("删除评论成功");
@@ -448,18 +471,18 @@ export default {
       const { data: res } = await this.$http.post("/api/v1/reply/add", {
         commentId: this.commentId,
         replyContent: this.message,
-        commentUser: this.commentUser
+        commentUser: this.commentUser,
       });
       if (res.code == 200) {
         this.$message.success("回复成功");
-        this.message = ''
+        this.message = "";
         this.getImgList();
         this.isShow = !this.isShow;
       } else {
         this.$message.error("回复失败!");
       }
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -503,8 +526,7 @@ export default {
   }
 }
 .el-rate {
-    line-height: 2;
-    margin-top: 4px;
+  line-height: 2;
+  margin-top: 4px;
 }
-
 </style>

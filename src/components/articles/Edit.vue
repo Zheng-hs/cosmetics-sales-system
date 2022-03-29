@@ -29,7 +29,7 @@
           <el-col :span="4">
             <el-form-item label="封面图片">
               <el-upload
-                class="avatar-uploader"
+                class="avatar-uploader1"
                 :action="serverUrl"
                 :show-file-list="false"
                 :on-success="handleAvatarSuccess"
