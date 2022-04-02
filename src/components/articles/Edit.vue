@@ -26,7 +26,7 @@
         label-width="100px"
       >
       <el-row :gutter="20">
-          <el-col :span="4">
+          <el-col :span="10">
             <el-form-item label="封面图片">
               <el-upload
                 class="avatar-uploader1"
@@ -37,6 +37,19 @@
                 <img v-if="imageUrl" :src="imageUrl" class="avatar" />
                 <i v-else class="el-icon-plus avatar-uploader-icon"></i>
               </el-upload>
+            </el-form-item>
+          </el-col>
+          <el-col :span="10">
+            <el-form-item label="商品" prop="goodsId">
+              <el-select v-model="addForm.goodsId" placeholder="请选择">
+                <el-option
+                  v-for="item in goodsList"
+                  :key="item.goodsId"
+                  :label="item.goodsName"
+                  :value="item.goodsId"
+                >
+                </el-option>
+              </el-select>
             </el-form-item>
           </el-col>
         </el-row>
@@ -127,6 +140,7 @@ export default {
       activeIndex: "0",
       addForm: {},
       cateList: [],
+      goodsList: [],
       articlesList: [],
       addFormRules: {
         articlesClassifyId: [
@@ -170,9 +184,15 @@ export default {
   },
   created() {
     this.getCateList();
+    this.getGoodsList();
     this.getList()
   },
   methods: {
+     async getGoodsList() {
+      const { data: res } = await this.$http.post("/api/v1/goods/search", {});
+      this.goodsList = res.data.data;
+    },
+
     async getCateList() {
       const { data: res } = await this.$http.post(
         "/api/v1/articlesClassify/search",
@@ -198,6 +218,7 @@ export default {
             articlesAuthor: this.addForm.articlesAuthor,
             articlesDescribe: this.addForm.articlesDescribe,
             articlesContent: this.addForm.articlesContent,
+            goodsId: this.addForm.goodsId
           }
         );
         if (res.code !== 200) {

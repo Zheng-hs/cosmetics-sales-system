@@ -183,8 +183,7 @@ export default {
       selectList1: [
         { label: "公告", value: "0" },
         { label: "文章", value: "1" },
-        { label: "话题", value: "2" },
-        { label: "商品", value: "3" },
+        { label: "话题", value: "2" }
       ],
       select: "",
       select1: "",

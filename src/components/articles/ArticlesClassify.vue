@@ -49,6 +49,13 @@
           </template>
         </el-table-column> -->
         <el-table-column prop="articlesClassifySort" label="分类排序"> </el-table-column>
+        <el-table-column prop="articlesClassifyType" label="类型">
+          <template slot-scope="scope">
+            <div v-if="scope.row.articlesClassifyType==='0'">公告</div>
+            <div v-else-if="scope.row.articlesClassifyType==='1'">文章</div>
+            <div v-else>话题</div>
+          </template>
+        </el-table-column>
         <!-- <el-table-column prop="articlesClassifyIcon" label="图标">
             <template slot-scope="scope">
             <el-image
@@ -223,8 +230,7 @@ export default {
        selectList: [
         { label: '公告', value: '0' },
         { label: '文章', value: '1' },
-        { label: '话题', value: '2' },
-        { label: '商品', value: '3' }
+        { label: '话题', value: '2' }
       ],
     };
   },

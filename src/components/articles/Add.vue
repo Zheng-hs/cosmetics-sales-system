@@ -24,9 +24,9 @@
         :rules="addFormRules"
         ref="addFormRef"
         label-width="100px"
-      > 
+      >
         <el-row :gutter="20">
-          <el-col :span="4">
+          <el-col :span="10">
             <el-form-item label="封面图片">
               <el-upload
                 class="avatar-uploader1"
@@ -37,6 +37,19 @@
                 <img v-if="imageUrl" :src="imageUrl" class="avatar" />
                 <i v-else class="el-icon-plus avatar-uploader-icon"></i>
               </el-upload>
+            </el-form-item>
+          </el-col>
+          <el-col :span="10">
+            <el-form-item label="商品" prop="goodsId">
+              <el-select v-model="addForm.goodsId" placeholder="请选择">
+                <el-option
+                  v-for="item in goodsList"
+                  :key="item.goodsId"
+                  :label="item.goodsName"
+                  :value="item.goodsId"
+                >
+                </el-option>
+              </el-select>
             </el-form-item>
           </el-col>
         </el-row>
@@ -119,37 +132,38 @@ const toolbarOptions = [
   [{ font: [] }],
   [{ align: [] }],
   ["link", "image", "video"],
-  ["clean"] // remove formatting button
+  ["clean"], // remove formatting button
 ];
-var token = sessionStorage.getItem('token')
+var token = sessionStorage.getItem("token");
 export default {
   data() {
     return {
       activeIndex: "0",
-      articlesClassifyId: '',
-      articlesType: '',
+      articlesClassifyId: "",
+      articlesType: "",
       addForm: {},
       cateList: [],
+      goodsList: [],
       articlesList: [],
       addFormRules: {
         articlesClassifyId: [
-          { required: true, message: "请选择公告分类", trigger: "blur" }
+          { required: true, message: "请选择公告分类", trigger: "blur" },
         ],
         articlesTitle: [
-          { required: true, message: "请输入公告标题", trigger: "blur" }
+          { required: true, message: "请输入公告标题", trigger: "blur" },
         ],
         articlesAuthor: [
-          { required: true, message: "请输入作者", trigger: "blur" }
+          { required: true, message: "请输入作者", trigger: "blur" },
         ],
         articlesDescribe: [
-          { required: true, message: "请输入公告描述", trigger: "blur" }
-        ]
+          { required: true, message: "请输入公告描述", trigger: "blur" },
+        ],
       },
       quillUpdateImg: false, // 根据图片上传状态来确定是否显示loading动画，刚开始是false,不显示
       serverUrl: "http://1.15.186.9:8006/api/v1/upload", // 这里写你要上传的图片服务器地址
       header: { Authorization: token }, // 有的图片服务器要求请求头需要有token之类的参数，写在这里
       imageUrl: "",
-      userPicture:'',
+      userPicture: "",
       detailContent: "", // 富文本内容
       editorOption: {
         placeholder: "",
@@ -158,22 +172,23 @@ export default {
           toolbar: {
             container: toolbarOptions, // 工具栏
             handlers: {
-              image: function(value) {
+              image: function (value) {
                 if (value) {
                   // 触发input框选择图片文件
                   document.querySelector(".avatar-uploader input").click();
                 } else {
                   this.quill.format("image", false);
                 }
-              }
-            }
-          }
-        }
-      } // 富文本编辑器配置
+              },
+            },
+          },
+        },
+      }, // 富文本编辑器配置
     };
   },
   created() {
     this.getCateList();
+    this.getGoodsList();
   },
   methods: {
     async getCateList() {
@@ -183,24 +198,44 @@ export default {
       );
       this.articlesList = res.data.data;
     },
+    async getGoodsList() {
+      const { data: res } = await this.$http.post("/api/v1/goods/search", {});
+      this.goodsList = res.data.data;
+    },
+
     async selectArticles(id) {
       const { data: res } = await this.$http.post(
         "/api/v1/articlesClassify/search",
-        {articlesClassifyId: id}
+        { articlesClassifyId: id }
       );
-      
-      this.articlesType = res.data.data[0].articlesClassifyType
-      this.articlesClassifyId = res.data.data[0].articlesClassifyId
 
+      this.articlesType = res.data.data[0].articlesClassifyType;
+      this.articlesClassifyId = res.data.data[0].articlesClassifyId;
     },
     add() {
-      this.$refs.addFormRef.validate(async valid => {
+      this.$refs.addFormRef.validate(async (valid) => {
         if (!valid) {
           return this.$message.error("请填写必要的表单项!");
         }
         //  发起请求添加商品
         // 商品的名称，必须是唯一的
-        const { data: res } = await this.$http.post(
+        if ((this.addForm.goodsId === '')) {
+          const { data: res } = await this.$http.post("/api/v1/articles/add", {
+            articlesClassifyId: this.articlesClassifyId,
+            articlesType: this.articlesType,
+            articlesTitle: this.addForm.articlesTitle,
+            articlesAuthor: this.addForm.articlesAuthor,
+            articlesDescribe: this.addForm.articlesDescribe,
+            articlesContent: this.addForm.articlesContent,
+            articlesImg: this.userPicture,
+          });
+          if (res.code !== 200) {
+            return this.$message.error("添加公告失败!");
+          }
+          this.$message.success("添加公告成功!");
+          this.$router.push("/invoice");
+        } else {
+           const { data: res } = await this.$http.post(
           "/api/v1/articles/add",
           {
             articlesClassifyId: this.articlesClassifyId,
@@ -209,7 +244,8 @@ export default {
             articlesAuthor: this.addForm.articlesAuthor,
             articlesDescribe: this.addForm.articlesDescribe,
             articlesContent: this.addForm.articlesContent,
-            articlesImg: this.userPicture
+            articlesImg: this.userPicture,
+            goodsId: this.addForm.goodsId
           }
         );
         if (res.code !== 200) {
@@ -217,6 +253,7 @@ export default {
         }
         this.$message.success("添加公告成功!");
         this.$router.push("/invoice");
+        }
       });
     },
     // 富文本图片上传前
@@ -234,7 +271,7 @@ export default {
       // res为图片服务器返回的数据
       // 获取富文本组件实例
       let quill = this.$refs.myQuillEditor.quill;
-    //   console.log(quill);
+      //   console.log(quill);
       // 如果上传成功
       if (res.status === 1 && res.path !== null) {
         // 获取光标所在位置
@@ -256,8 +293,8 @@ export default {
       // loading动画消失
       this.quillUpdateImg = false;
       this.$message.error("图片插入失败");
-    }
-  }
+    },
+  },
 };
 </script>
 
